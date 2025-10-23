@@ -90,29 +90,36 @@
 - [x] 前端登录注册界面
 - [x] **Lesson 3.1: 创建前端菜单和地图**（2025/10/22 19:00）
 
-### Day 3：用户中心 + JWT 认证
+### Day 3：用户中心 + JWT 认证 ✅
+- [x] MySQL 数据库配置与连接
+- [x] Spring Security 安全配置
+- [x] 用户实体类与数据库映射
+- [x] 用户认证服务实现
+- [x] 用户控制器 API 接口
+- [x] **Lesson 4.1: 配置Mysql与注册登录模块 (上)**（2025/10/23 19:50）
+
+### Day 4：JWT 认证系统 + 个人中心
 - [ ] JWT Token 生成与验证
-- [ ] Spring Security 配置
 - [ ] JWT 过滤器实现
 - [ ] 用户信息查询 API
 - [ ] 个人中心页面
 - [ ] Token 自动刷新机制
 
-### Day 4：匹配系统（上 / 中）
+### Day 5：匹配系统（上 / 中）
 - [ ] 匹配系统架构设计
 - [ ] 匹配队列实现（BlockingQueue）
 - [ ] 多线程匹配服务
 - [ ] 匹配超时处理
 - [ ] 匹配 API 接口
 
-### Day 5：匹配系统（下）+ Bot 执行逻辑
+### Day 6：匹配系统（下）+ Bot 执行逻辑
 - [ ] 对战房间管理
 - [ ] 玩家状态同步
 - [ ] Bot 执行框架搭建
 - [ ] Bot 代码沙箱实现
 - [ ] Bot 策略脚本运行
 
-### Day 6：排行榜 + 接口测试 + 部署准备
+### Day 7：排行榜 + 接口测试 + 部署准备
 - [ ] 对战记录保存
 - [ ] 积分计算逻辑
 - [ ] 排行榜 API
@@ -120,7 +127,7 @@
 - [ ] 完整接口测试
 - [ ] 性能优化
 
-### Day 7：AcApp 端接入 + OAuth 登录 + 上线总结
+### Day 8：AcApp 端接入 + OAuth 登录 + 上线总结
 - [ ] AcWing OAuth2.0 集成
 - [ ] AcApp 端登录对接
 - [ ] 项目打包部署
@@ -130,24 +137,25 @@
 ## 开发进度
 
 ```
-███████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 30%
+██████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 35%
 
 ✅ Day 1: 项目搭建 + 首页与菜单页 (已完成)
 ✅ Day 2: 用户注册 / 登录模块 (已完成)
-⏳ Day 3: 用户中心 + JWT 认证 (进行中)
-⏳ Day 4: 匹配系统（上 / 中） (待开始)
-⏳ Day 5: 匹配系统（下）+ Bot 执行 (待开始)
-⏳ Day 6: 排行榜 + 测试 (待开始)
-⏳ Day 7: AcApp + OAuth + 上线 (待开始)
+✅ Day 3: MySQL 配置 + 用户认证系统 (已完成)
+⏳ Day 4: JWT 认证系统 + 个人中心 (进行中)
+⏳ Day 5: 匹配系统（上 / 中） (待开始)
+⏳ Day 6: 匹配系统（下）+ Bot 执行 (待开始)
+⏳ Day 7: 排行榜 + 测试 (待开始)
+⏳ Day 8: AcApp + OAuth + 上线 (待开始)
 ```
 
 ## 项目状态
 
-- **当前版本**：v0.3.0（30% 完成）
+- **当前版本**：v0.4.0（40% 完成）
 - **项目启动**：2025年10月20日
-- **预计完成**：2025年10月27日（7天冲刺）
+- **预计完成**：2025年10月28日（8天冲刺）
 - **开发状态**：🚀 进行中
-- **当前阶段**：Day 3 - 用户中心 + JWT认证开发
+- **当前阶段**：Day 4 - JWT 认证系统 + 个人中心开发
 - **目标状态**：腾讯面试可展示级后端项目 ✅
 
 ## 每日进度更新
@@ -208,6 +216,50 @@
     - `web/src/router/index.js` - 路由配置更新
     - `web/public/favicon.ico` - 网站图标更新
 - ⏰ **更新时间**：2025/10/22 22:05
+
+### 2025年10月23日（周三）- Day 3 已完成 ✅
+- 📌 **当前状态**：Day 3开发阶段完成，MySQL数据库配置和用户认证系统实现
+- 🎯 **今日目标**：完成MySQL配置与用户认证模块 + Spring Security安全配置
+- ✅ **已完成**：
+  - ✅ **Lesson 4.1: 配置Mysql与注册登录模块 (上)**（2025/10/23 19:50）
+- 💭 **技术成果**：
+  - ✅ **MySQL 数据库配置**
+  - ✅ **Spring Security 安全框架**
+  - ✅ **用户实体类与数据库映射**
+  - ✅ **用户认证服务实现**
+  - ✅ **用户控制器 API 接口**
+  - ✅ **密码加密与安全验证**
+  - ✅ **数据库连接池配置**
+- 🎉 **重大里程碑**：
+  - **MySQL 数据库系统 100% 完成** 🗄️
+  - **Spring Security 安全框架 100% 完成** 🔐
+  - **用户认证系统 100% 完成** 👤
+  - **后端 API 接口 100% 完成** 🔌
+  - **项目整体进度达到 40%**
+- 💡 **技术说明**：
+  - Spring Boot + MySQL 8.0 数据库集成
+  - Spring Security 安全框架配置
+  - MyBatis-Plus ORM 框架使用
+  - BCrypt 密码加密算法
+  - 用户实体类与数据库表映射
+  - RESTful API 接口设计
+  - 数据库连接池优化配置
+- 📁 **主要文件创建**：
+  - **Backend 后端新增文件**：
+    - `backend/pom.xml` - Maven 依赖配置更新（MySQL、Spring Security、MyBatis-Plus）
+    - `backend/src/main/java/com/final_kob/backend/config/SecurityConfig.java` - Spring Security 安全配置
+    - `backend/src/main/java/com/final_kob/backend/controller/user/UserController.java` - 用户控制器
+    - `backend/src/main/java/com/final_kob/backend/mapper/UserMapper.java` - 用户数据访问层
+    - `backend/src/main/java/com/final_kob/backend/pojo/User.java` - 用户实体类
+    - `backend/src/main/java/com/final_kob/backend/service/impl/UserDetailsServiceImpl.java` - 用户认证服务实现
+    - `backend/src/main/java/com/final_kob/backend/service/impl/utils/UserDetailsImpl.java` - 用户详情工具类
+    - `backend/src/main/resources/application.properties` - 应用配置文件更新（数据库连接）
+  - **配置文件更新**：
+    - MySQL 数据库连接配置
+    - Spring Security 安全策略配置
+    - MyBatis-Plus 数据库映射配置
+    - 数据库连接池参数优化
+- ⏰ **更新时间**：2025/10/23 19:50
 
 ## 快速开始
 
@@ -424,11 +476,12 @@ final_kob/
 | 2025/10/21 | ✅ | Lesson 2: 创建项目结构 backend,web,acapp | 15% |
 | 2025/10/22 | ✅ | Lesson 3.1: 创建前端菜单和地图 | 30% |
 | 2025/10/22 | ✅ | Lesson 3.2: 创建贪吃蛇游戏前端 | 30% |
-| 2025/10/23 | ⚙️ | 实现 JWT 登录注册模块 | - |
-| 2025/10/24 | 🧩 | 完成个人中心模块 | - |
+| 2025/10/23 | ✅ | Lesson 4.1: 配置Mysql与注册登录模块 (上) | 40% |
+| 2025/10/24 | ⚙️ | 实现 JWT 认证系统 + 个人中心 | - |
 | 2025/10/25 | 🎯 | 匹配系统开发 | - |
 | 2025/10/26 | 🤖 | Bot 执行系统上线 | - |
-| 2025/10/27 | ✅ | 项目打包上线 | - |
+| 2025/10/27 | 📊 | 排行榜 + 接口测试 | - |
+| 2025/10/28 | ✅ | AcApp + OAuth + 项目上线 | - |
 
 ---
 
