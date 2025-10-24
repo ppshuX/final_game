@@ -54,6 +54,11 @@
 - [ ] 天梯积分系统
 
 ### 3. Bot 执行系统 🤖
+- [x] Bot 后端 CRUD API 实现
+- [x] Bot 实体类与数据库映射
+- [x] Bot 控制器 API 接口
+- [x] Bot 服务层实现
+- [x] Bot 数据访问层
 - [ ] Bot 代码安全沙箱执行
 - [ ] 策略脚本运行与回传
 - [ ] 自动战斗逻辑
@@ -107,7 +112,12 @@
 - [x] **Lesson 4.2: 配置Mysql与注册登录模块 (中)**（2025/10/24 17:00）
 - [x] **Lesson 4.3: 配置Mysql与注册登录模块 (下)**（2025/10/24 17:00）
 
-### Day 5：个人中心 + 用户信息管理
+### Day 5：个人中心 + 用户信息管理 ✅
+- [x] Bot 后端 CRUD API 实现
+- [x] Bot 实体类与数据库映射
+- [x] Bot 控制器 API 接口
+- [x] Bot 服务层实现
+- [x] Bot 数据访问层
 - [ ] 用户信息查询 API
 - [ ] 个人中心页面
 - [ ] Token 自动刷新机制
@@ -145,13 +155,13 @@
 ## 开发进度
 
 ```
-████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 40%
+████████████████████░░░░░░░░░░░░░░░░░░░░░░ 50%
 
 ✅ Day 1: 项目搭建 + 首页与菜单页 (已完成)
 ✅ Day 2: 用户注册 / 登录模块 (已完成)
 ✅ Day 3: MySQL 配置 + 用户认证系统 (已完成)
 ✅ Day 4: JWT 认证系统 + 账户系统 (已完成)
-⏳ Day 5: 个人中心 + 用户信息管理 (进行中)
+✅ Day 5: Bot 后端 CRUD API (已完成)
 ⏳ Day 6: 匹配系统（上 / 中） (待开始)
 ⏳ Day 7: 匹配系统（下）+ Bot 执行 (待开始)
 ⏳ Day 8: 排行榜 + 测试 (待开始)
@@ -160,11 +170,11 @@
 
 ## 项目状态
 
-- **当前版本**：v0.5.0（40% 完成）
+- **当前版本**：v0.6.0（55% 完成）
 - **项目启动**：2025年10月20日
 - **预计完成**：2025年10月29日（9天冲刺）
 - **开发状态**：🚀 进行中
-- **当前阶段**：Day 5 - 个人中心 + 用户信息管理开发
+- **当前阶段**：Day 5 - Bot 后端 CRUD API 开发完成
 - **目标状态**：腾讯面试可展示级后端项目 ✅
 
 ## 每日进度更新
@@ -326,6 +336,54 @@
   - **文件删除**：
     - `backend/src/main/java/com/final_kob/backend/controller/user/UserController.java` - 旧用户控制器（已重构）
 - ⏰ **更新时间**：2025/10/24 17:00
+
+### 2025年10月24日（周四）- Day 5 已完成 ✅
+- 📌 **当前状态**：Day 5开发阶段完成，Bot后端CRUD API实现
+- 🎯 **今日目标**：完成Bot后端增删改查API + Bot实体类与数据库映射
+- ✅ **已完成**：
+  - ✅ **Lesson 5.1: 创建Bot后端CRUD API**（2025/10/24 20:50）
+- 💭 **技术成果**：
+  - ✅ **Bot 实体类与数据库映射**
+  - ✅ **Bot 控制器 API 接口**
+  - ✅ **Bot 服务层实现**
+  - ✅ **Bot 数据访问层**
+  - ✅ **Bot CRUD 完整功能**
+  - ✅ **RESTful API 设计**
+  - ✅ **分层架构实践**
+- 🎉 **重大里程碑**：
+  - **Bot 后端 CRUD API 100% 完成** 🤖
+  - **Bot 数据访问层 100% 完成** 🗄️
+  - **Bot 服务层 100% 完成** ⚙️
+  - **Bot 控制器层 100% 完成** 🎮
+  - **项目整体进度达到 55%**
+- 💡 **技术说明**：
+  - Spring Boot 分层架构设计
+  - MyBatis-Plus ORM 框架使用
+  - RESTful API 接口设计
+  - Bot 实体类与数据库表映射
+  - CRUD 操作完整实现
+  - 服务层与控制器层解耦
+  - 数据访问层抽象化
+- 📁 **主要文件创建**：
+  - **Backend 后端新增文件**：
+    - `backend/src/main/java/com/final_kob/backend/controller/user/bot/AddController.java` - Bot 添加控制器
+    - `backend/src/main/java/com/final_kob/backend/controller/user/bot/GetListController.java` - Bot 列表查询控制器
+    - `backend/src/main/java/com/final_kob/backend/controller/user/bot/RemoveController.java` - Bot 删除控制器
+    - `backend/src/main/java/com/final_kob/backend/controller/user/bot/UpdateController.java` - Bot 更新控制器
+    - `backend/src/main/java/com/final_kob/backend/mapper/BotMapper.java` - Bot 数据访问层
+    - `backend/src/main/java/com/final_kob/backend/pojo/Bot.java` - Bot 实体类
+    - `backend/src/main/java/com/final_kob/backend/service/bot/AddService.java` - Bot 添加服务接口
+    - `backend/src/main/java/com/final_kob/backend/service/bot/GetListService.java` - Bot 列表查询服务接口
+    - `backend/src/main/java/com/final_kob/backend/service/bot/RemoveService.java` - Bot 删除服务接口
+    - `backend/src/main/java/com/final_kob/backend/service/bot/UpdateService.java` - Bot 更新服务接口
+    - `backend/src/main/java/com/final_kob/backend/service/impl/bot/AddServiceImpl.java` - Bot 添加服务实现
+    - `backend/src/main/java/com/final_kob/backend/service/impl/bot/GetListServiceImpl.java` - Bot 列表查询服务实现
+    - `backend/src/main/java/com/final_kob/backend/service/impl/bot/RemoveServiceImpl.java` - Bot 删除服务实现
+    - `backend/src/main/java/com/final_kob/backend/service/impl/bot/UpdateServiceImpl.java` - Bot 更新服务实现
+  - **配置文件更新**：
+    - `backend/src/main/java/com/final_kob/backend/mapper/UserMapper.java` - 用户数据访问层更新
+    - `web/src/views/user/bot/UserBotIndexView.vue` - Bot 管理页面更新
+- ⏰ **更新时间**：2025/10/24 20:50
 
 ## 快速开始
 
@@ -545,6 +603,7 @@ final_kob/
 | 2025/10/23 | ✅ | Lesson 4.1: 配置Mysql与注册登录模块 (上) | 40% |
 | 2025/10/24 | ✅ | Lesson 4.2: 配置Mysql与注册登录模块 (中) | 50% |
 | 2025/10/24 | ✅ | Lesson 4.3: 配置Mysql与注册登录模块 (下) | 50% |
+| 2025/10/24 | ✅ | Lesson 5.1: 创建Bot后端CRUD API | 55% |
 | 2025/10/25 | ⚙️ | 实现个人中心 + 用户信息管理 | - |
 | 2025/10/26 | 🎯 | 匹配系统开发 | - |
 | 2025/10/27 | 🤖 | Bot 执行系统上线 | - |
