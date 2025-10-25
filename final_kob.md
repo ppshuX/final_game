@@ -46,6 +46,9 @@
 - [x] 头像上传
 
 ### 2. 匹配系统 🎯
+- [x] WebSocket 实时通信
+- [x] 地图同步机制
+- [x] 匹配系统基础架构
 - [ ] 多线程匹配逻辑
 - [ ] 匹配队列管理
 - [ ] 匹配超时与取消机制
@@ -126,12 +129,15 @@
 - [x] 用户头像上传
 
 ### Day 6：匹配系统（上 / 中）🚀
-- [ ] 匹配系统架构设计
+- [x] WebSocket 配置与服务器实现
+- [x] 匹配系统基础架构设计
+- [x] 地图同步机制实现
+- [x] JWT 认证集成
+- [x] 匹配界面开发
 - [ ] 匹配队列实现（BlockingQueue）
 - [ ] 多线程匹配服务
 - [ ] 匹配超时处理
 - [ ] 匹配 API 接口
-- [ ] 匹配界面开发
 
 ### Day 7：匹配系统（下）+ Bot 执行逻辑
 - [ ] 对战房间管理
@@ -158,14 +164,14 @@
 ## 开发进度
 
 ```
-███████████████████████░░░░░░░░░░░░░░░░░░░ 60%
+██████████████████████████░░░░░░░░░░░░░░░░ 65%
 
 ✅ Day 1: 项目搭建 + 首页与菜单页 (已完成)
 ✅ Day 2: 用户注册 / 登录模块 (已完成)
 ✅ Day 3: MySQL 配置 + 用户认证系统 (已完成)
 ✅ Day 4: JWT 认证系统 + 账户系统 (已完成)
 ✅ Day 5: 个人中心 + Bot 管理 (已完成)
-⏳ Day 6: 匹配系统（上 / 中） (进行中)
+🚀 Day 6: 匹配系统（上 / 中） (进行中 - Lesson 6.1 完成)
 ⏳ Day 7: 匹配系统（下）+ Bot 执行 (待开始)
 ⏳ Day 8: 排行榜 + 测试 (待开始)
 ⏳ Day 9: AcApp + OAuth + 上线 (待开始)
@@ -173,11 +179,11 @@
 
 ## 项目状态
 
-- **当前版本**：v0.7.0（60% 完成）
+- **当前版本**：v0.7.5（65% 完成）
 - **项目启动**：2025年10月20日
 - **预计完成**：2025年10月29日（9天冲刺）
 - **开发状态**：🚀 进行中
-- **当前阶段**：Day 6 - 匹配系统开发（进行中）
+- **当前阶段**：Day 6 - 匹配系统开发（Lesson 6.1 已完成）
 - **目标状态**：腾讯面试可展示级后端项目 ✅
 
 ## 每日进度更新
@@ -429,6 +435,52 @@
     - `web/package-lock.json` - 依赖锁定文件更新
 - ⏰ **更新时间**：2025/10/25 12:40
 
+### 2025年10月25日（周五）- Day 6 Lesson 6.1 已完成 ✅
+- 📌 **当前状态**：Day 6 Lesson 6.1开发阶段完成，匹配系统前后端WebSocket通信实现
+- 🎯 **今日目标**：完成匹配系统前后端WebSocket通讯的一半（同步地图+匹配）
+- ✅ **已完成**：
+  - ✅ **Lesson 6.1: 实现微服务:匹配系统 (上)**（2025/10/25 22:05）
+- 💭 **技术成果**：
+  - ✅ **WebSocket 配置与服务器实现**
+  - ✅ **匹配系统基础架构设计**
+  - ✅ **地图同步机制实现**
+  - ✅ **JWT 认证集成**
+  - ✅ **匹配界面开发**
+  - ✅ **前后端实时通信**
+  - ✅ **游戏状态同步**
+- 🎉 **重大里程碑**：
+  - **WebSocket 实时通信 100% 完成** 🔌
+  - **匹配系统基础架构 100% 完成** 🎯
+  - **地图同步机制 100% 完成** 🗺️
+  - **JWT 认证集成 100% 完成** 🔐
+  - **项目整体进度达到 65%**
+- 💡 **技术说明**：
+  - Spring Boot WebSocket 配置与实现
+  - 前后端实时双向通信
+  - 游戏地图状态同步
+  - JWT Token 认证集成
+  - 匹配系统基础架构设计
+  - Vue3 组件化开发
+  - WebSocket 连接管理与状态维护
+- 📁 **主要文件创建**：
+  - **Backend 后端新增文件**：
+    - `backend/src/main/java/com/final_kob/backend/config/WebSocketConfig.java` - WebSocket 配置
+    - `backend/src/main/java/com/final_kob/backend/consumer/WebSocketServer.java` - WebSocket 服务器
+    - `backend/src/main/java/com/final_kob/backend/consumer/utils/Game.java` - 游戏逻辑类
+    - `backend/src/main/java/com/final_kob/backend/consumer/utils/JwtAuthentication.java` - JWT 认证工具
+  - **Frontend 前端新增文件**：
+    - `web/src/components/MatchGround.vue` - 匹配场地组件
+    - `web/src/store/pk.js` - PK 状态管理模块
+  - **配置文件更新**：
+    - `backend/pom.xml` - WebSocket 相关依赖添加
+    - `backend/src/main/java/com/final_kob/backend/config/SecurityConfig.java` - Spring Security 配置更新
+    - `backend/src/main/java/com/final_kob/backend/utils/JwtUtil.java` - JWT 工具类更新
+    - `web/src/assets/scripts/GameMap.js` - 游戏地图脚本更新
+    - `web/src/components/GameMap.vue` - 游戏地图组件更新
+    - `web/src/store/index.js` - Vuex 状态管理更新
+    - `web/src/views/pk/PkIndexView.vue` - PK 页面更新
+- ⏰ **更新时间**：2025/10/25 22:05
+
 ## 快速开始
 
 ### 环境要求
@@ -594,7 +646,7 @@ final_kob/
 | **框架** | Django + Channels | Spring Boot |
 | **ORM** | Django ORM | MyBatis-Plus |
 | **认证** | JWT + DRF | JWT + Spring Security |
-| **实时通信** | WebSocket | 预留接口 |
+| **实时通信** | WebSocket | WebSocket 已实现 |
 | **匹配系统** | Thrift RPC | 多线程队列 |
 | **缓存** | Redis | Redis |
 | **部署难度** | 中等 | 简单（打包为 JAR） |
@@ -649,7 +701,7 @@ final_kob/
 | 2025/10/24 | ✅ | Lesson 4.3: 配置Mysql与注册登录模块 (下) | 50% |
 | 2025/10/24 | ✅ | Lesson 5.1: 创建Bot后端CRUD API | 55% |
 | 2025/10/25 | ✅ | Lesson 5.2: 创建个人中心页面 (下) | 60% |
-| 2025/10/26 | ⚙️ | 实现微服务: 匹配系统 (上) | - |
+| 2025/10/25 | ✅ | Lesson 6.1: 实现微服务: 匹配系统 (上) | 65% |
 | 2025/10/26 | 🎯 | 匹配系统开发 | - |
 | 2025/10/27 | 🤖 | Bot 执行系统上线 | - |
 | 2025/10/28 | 📊 | 排行榜 + 接口测试 | - |
