@@ -84,10 +84,14 @@
 - [x] MyBatis-Plus 分页查询
 
 ### 5. 项目部署 🚀
-- [ ] 后端打包上线
-- [ ] AcApp 端 + Web 端 登录对接
-- [ ] 性能调优与安全配置
-- [ ] Docker 容器化部署
+- [x] 后端打包上线
+- [x] 前端打包与部署
+- [x] 服务器环境配置
+- [x] Nginx 反向代理配置
+- [x] 项目成功上线运行
+- [ ] AcApp 端登录对接
+- [ ] 性能调优与安全配置（可选）
+- [ ] Docker 容器化部署（可选）
 
 ## 开发计划（7天冲刺）
 
@@ -173,17 +177,19 @@
 - [ ] 完整接口测试
 - [ ] 性能优化
 
-### Day 9：AcApp 端接入 + OAuth 登录 + 上线总结
-- [ ] AcWing OAuth2.0 集成
-- [ ] AcApp 端登录对接
-- [ ] 项目打包部署
-- [ ] 文档完善
-- [ ] 项目总结
+### Day 9：项目上线 ✅
+- [x] 后端服务打包与部署
+- [x] 前端静态资源打包与部署
+- [x] Nginx 配置与反向代理
+- [x] 服务器环境配置
+- [x] 项目成功上线
+- [ ] AcWing OAuth2.0 集成（待 AcApp 端）
+- [ ] AcApp 端登录对接（待 AcApp 端）
 
 ## 开发进度
 
 ```
-█████████████████████████████████░░░░░░░░░ 85%
+████████████████████████████████████░░░░░░ 90%
 
 ✅ Day 1: 项目搭建 + 首页与菜单页 (已完成)
 ✅ Day 2: 用户注册 / 登录模块 (已完成)
@@ -193,16 +199,17 @@
 ✅ Day 6: 匹配系统（上 / 中） (已完成 - Lesson 6.1, 6.2, 6.3)
 ✅ Day 7: 匹配系统（下）+ Bot 执行 (已完成 - Lesson 7)
 ✅ Day 8: 排行榜 + 录像回放 (已完成 - Lesson 8)
-⏳ Day 9: AcApp + OAuth + 上线 (待开始)
+✅ Day 9: 项目上线 (已完成 - Lesson 9)
+⏳ Day 10: AcApp 端实现 (待开始 - Lesson 10.1, 10.2)
 ```
 
 ## 项目状态
 
-- **当前版本**：v0.9.5（85% 完成）
+- **当前版本**：v1.0.0（90% 完成）
 - **项目启动**：2025年10月20日
-- **预计完成**：2025年11月2日
-- **开发状态**：🚀 进行中
-- **当前阶段**：Day 8 - 排行榜与录像回放完成（Lesson 8 已完成）
+- **项目上线**：2025年11月1日 🎉
+- **开发状态**：🚀 已上线运行
+- **当前阶段**：Day 9 - 项目成功上线（Lesson 9 已完成）
 - **目标状态**：腾讯面试可展示级后端项目 ✅
 
 ## 每日进度更新
@@ -729,6 +736,86 @@
     - `web/src/views/record/RecordIndexView.vue` - 更新对战记录列表页面
 - ⏰ **更新时间**：2025/11/1 12:30
 
+### 2025年11月1日（周五）- Day 9 Lesson 9 已完成 ✅
+- 📌 **当前状态**：Day 9开发阶段完成，项目成功上线部署到服务器
+- 🎯 **今日目标**：完成Lesson 9，实现项目上线部署
+- ✅ **已完成**：
+  - ✅ **Lesson 9: 项目上线**（2025/11/1 16:20）
+- 💭 **技术成果**：
+  - ✅ **后端服务打包与部署**
+  - ✅ **前端静态资源打包与部署**
+  - ✅ **Nginx 配置与反向代理**
+  - ✅ **服务器环境配置（Java, MySQL, Nginx）**
+  - ✅ **域名配置与解析**
+  - ✅ **项目成功上线运行**
+  - ✅ **所有三大微服务模块集成部署**
+  - ✅ **部署脚本自动化（upload.sh）**
+- 🎉 **重大里程碑**：
+  - **项目上线 100% 完成** 🚀
+  - **后端部署 100% 完成** ☁️
+  - **前端部署 100% 完成** 🌐
+  - **项目整体进度达到 90%**
+  - **Final_KOB 正式上线运行** 🎊
+- 💡 **技术说明**：
+  - Spring Boot 打包为 JAR，通过后台进程运行
+  - Vue CLI 打包前端项目，生成静态文件
+  - Nginx 配置反向代理，处理前端请求和后端 API 请求
+  - 三大微服务模块（Backend、Matchingsystem、Botrunningsystem）同时部署
+  - 配置跨域、WebSocket 通信
+  - 部署脚本 `upload.sh` 实现自动化部署
+  - 数据库初始化与数据迁移
+  - 服务器环境优化配置
+- 📁 **主要文件新增/更新**：
+  - **Backend 后端更新文件**：
+    - `backendcloud/backend/pom.xml` - 更新依赖，优化打包配置
+    - `backendcloud/backend/src/main/java/com/final_kob/backend/config/SecurityConfig.java` - 安全配置更新（生产环境）
+    - `backendcloud/backend/src/main/java/com/final_kob/backend/consumer/WebSocketServer.java` - WebSocket 配置更新
+    - `backendcloud/backend/src/main/java/com/final_kob/backend/controller/pk/ReceiveBotMoveController.java` - Bot移动控制器更新
+    - `backendcloud/backend/src/main/java/com/final_kob/backend/controller/pk/StartGameController.java` - 开始游戏控制器更新
+    - `backendcloud/backend/src/main/java/com/final_kob/backend/controller/ranklist/GetRanklistController.java` - 排行榜控制器更新
+    - `backendcloud/backend/src/main/java/com/final_kob/backend/controller/record/GetRecordListController.java` - 记录列表控制器更新
+    - `backendcloud/backend/src/main/java/com/final_kob/backend/controller/user/account/InfoController.java` - 用户信息控制器更新
+    - `backendcloud/backend/src/main/java/com/final_kob/backend/controller/user/account/LoginController.java` - 登录控制器更新
+    - `backendcloud/backend/src/main/java/com/final_kob/backend/controller/user/account/RegisterController.java` - 注册控制器更新
+    - `backendcloud/backend/src/main/java/com/final_kob/backend/controller/user/bot/AddController.java` - Bot添加控制器更新
+    - `backendcloud/backend/src/main/java/com/final_kob/backend/controller/user/bot/GetListController.java` - Bot列表控制器更新
+    - `backendcloud/backend/src/main/java/com/final_kob/backend/controller/user/bot/RemoveController.java` - Bot删除控制器更新
+    - `backendcloud/backend/src/main/java/com/final_kob/backend/controller/user/bot/UpdateController.java` - Bot更新控制器更新
+    - `backendcloud/backend/src/main/java/com/final_kob/backend/service/impl/pk/ReceiveBotMoveServiceImpl.java` - Bot移动服务实现更新
+    - `backendcloud/backend/src/main/java/com/final_kob/backend/service/impl/pk/StartGameServiceImpl.java` - 开始游戏服务实现更新
+    - `backendcloud/backend/src/test/java/com/final_kob/backend/BackendApplicationTests.java` - **删除测试文件（生产环境优化）**
+  - **Botrunningsystem 更新文件**：
+    - `backendcloud/botrunningsystem/pom.xml` - 更新依赖
+    - `backendcloud/botrunningsystem/src/main/java/com/final_kob/botrunningsystem/service/impl/BotRunningServiceImpl.java` - Bot执行服务实现更新
+    - `backendcloud/botrunningsystem/src/main/java/com/final_kob/botrunningsystem/service/impl/utils/Consumer.java` - 消费者更新
+    - `backendcloud/botrunningsystem/src/main/java/com/final_kob/botrunningsystem/utils/Bot.java` - Bot工具类更新
+  - **Matchingsystem 更新文件**：
+    - `backendcloud/matchingsystem/pom.xml` - 更新依赖
+    - `backendcloud/matchingsystem/src/main/java/com/final_kob/matchingsystem/service/impl/MatchingServiceImpl.java` - 匹配服务实现更新
+    - `backendcloud/matchingsystem/src/main/java/com/final_kob/matchingsystem/service/impl/utils/MatchingPool.java` - 匹配池更新
+  - **Root Project 更新文件**：
+    - `backendcloud/pom.xml` - 父项目 POM 更新
+    - `backendcloud/input.txt` - **新增输入文件**
+  - **Frontend 前端更新文件**：
+    - `.vscode/settings.json` - VS Code 配置更新
+    - `web/src/components/MatchGround.vue` - 匹配界面更新（适配生产环境）
+    - `web/src/router/index.js` - 路由配置更新
+    - `web/src/store/user.js` - 用户状态管理更新
+    - `web/src/views/pk/PkIndexView.vue` - PK 页面更新
+    - `web/src/views/ranklist/RanklistIndexView.vue` - 排行榜页面更新
+    - `web/src/views/record/RecordIndexView.vue` - 录像页面更新
+    - `web/src/views/user/account/UserAccountRegisterView.vue` - 注册页面更新
+    - `web/src/views/user/bot/UserBotIndexView.vue` - Bot 管理页面更新
+    - `web/upload.sh` - **新增部署脚本（自动化部署）**
+    - `web/vue.config.js` - Vue 配置更新（生产环境配置）
+- 💭 **项目上线说明**：
+  - 项目已成功部署到服务器并正常运行
+  - 所有功能测试通过，包括：用户系统、匹配系统、Bot执行系统、排行榜、录像回放
+  - 三大微服务模块（Backend、Matchingsystem、Botrunningsystem）协同工作
+  - 前后端分离架构，Nginx 反向代理
+  - 支持实时对战、Bot 对战、排行榜查看、对局回放等完整功能
+- ⏰ **更新时间**：2025/11/1 16:20
+
 ## 快速开始
 
 ### 环境要求
@@ -955,6 +1042,7 @@ final_kob/
 | 2025/10/27-10/30 | 📝 | 重构 Roamio 项目（暂停 Final_KOB 开发） | - |
 | 2025/10/31 | ✅ | Lesson 7: 实现微服务: Bot代码的执行 | 80% |
 | 2025/11/1 | ✅ | Lesson 8: 创建对战列表与排行榜页面 | 85% |
+| 2025/11/1 | ✅ | Lesson 9: 项目上线 🎉 | 90% |
 
 ---
 
