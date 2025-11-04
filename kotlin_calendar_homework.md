@@ -15,16 +15,17 @@
 ## 📊 项目整体进度
 
 ```
-█████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 10%
+██████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 20%
 
 Day 1: 基础日历界面 ✅
-Day 2-10: 待开发 ⏳
+Day 2: 添加和显示日程 ✅
+Day 3-10: 待开发 ⏳
 ```
 
 **项目启动**：2025年11月4日  
 **预计完成**：2025年11月14日  
 **开发状态**：进行中  
-**当前阶段**：Day 1 已完成
+**当前阶段**：Day 2 已完成
 
 ---
 
@@ -33,7 +34,7 @@ Day 2-10: 待开发 ⏳
 | 天数 | 主要任务 | 状态 | 用时 | 备注 |
 |------|---------|------|------|------|
 | **Day 1** | 把日历显示出来 | ✅ 完成 | 3h | 解决依赖冲突，原生CalendarView |
-| **Day 2** | 能添加和显示日程 | ⏳ 计划中 | - | RecyclerView + Dialog |
+| **Day 2** | 能添加和显示日程 | ✅ 完成 | 2h | Material Dialog + 卡片布局 |
 | **Day 3** | 数据库保存 | ⏳ 计划中 | - | SharedPreferences 或 SQLite |
 | **Day 4** | 列表显示优化 | ⏳ 计划中 | - | UI美化 + 交互优化 |
 | **Day 5** | 编辑和删除 | ⏳ 计划中 | - | CRUD完整实现 |
@@ -311,6 +312,42 @@ error: resource color/purple_500 not found
    - `setOnDateChangeListener` - 日期改变监听
    - 类似 Web 的 `addEventListener`
 
+#### 5. UI 组件（Day 2）
+
+**TextInputLayout（Material Design 输入框）**
+```xml
+<com.google.android.material.textfield.TextInputLayout
+    android:hint="提示文本"
+    app:boxBackgroundMode="outline">
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/etInput" />
+</com.google.android.material.textfield.TextInputLayout>
+```
+
+**AlertDialog（对话框）**
+```kotlin
+AlertDialog.Builder(this)
+    .setTitle("标题")
+    .setView(view)  // 自定义布局
+    .setPositiveButton("确定") { _, _ -> }
+    .setNegativeButton("取消", null)
+    .show()
+```
+
+**LayoutInflater（布局加载器）**
+```kotlin
+val view = layoutInflater.inflate(R.layout.dialog_add_event, null)
+val input = view.findViewById<EditText>(R.id.xxx)
+```
+
+**长按事件**
+```kotlin
+view.setOnLongClickListener {
+    // 处理长按
+    true  // 返回 true 表示消费事件
+}
+```
+
 **Android vs Web 对比**
 
 | Android | Web | 说明 |
@@ -410,9 +447,9 @@ error: resource color/purple_500 not found
 
 ## 📚 学习笔记
 
-### Kotlin 基础语法（Day 1）
+### Kotlin 基础语法
 
-#### 1. 变量声明
+#### 1. 变量声明（Day 1）
 ```kotlin
 // 不可变变量（类似 JS 的 const）
 val name = "Calendar"
@@ -445,7 +482,7 @@ val str = "我叫$name，今年$age岁"  // 简单变量用 $
 val str2 = "明年${age + 1}岁"      // 表达式用 ${}
 ```
 
-#### 4. 函数定义
+#### 4. 函数定义（Day 1）
 ```kotlin
 // 无返回值
 fun showDate(time: Long) {
@@ -461,9 +498,42 @@ fun getDate(time: Long): String {
 fun double(x: Int) = x * 2
 ```
 
-### Android 基础（Day 1）
+#### 5. Kotlin 实用技巧（Day 2）
 
-#### 1. Activity 生命周期
+**buildString {}**
+```kotlin
+val str = buildString {
+    append("第一行\n")
+    append("第二行")
+}
+// 高效的字符串构建器，类似 JavaScript 的数组 join()
+```
+
+**字符串判断**
+```kotlin
+str.isNotEmpty()  // 非空判断
+str.isEmpty()     // 空判断
+str.trim()        // 去除首尾空格
+```
+
+**mapIndexed**
+```kotlin
+eventsList.mapIndexed { index, event ->
+    "日程 ${index + 1}"
+}
+// 带索引的 map，类似 JS 的 map((item, index) => ...)
+```
+
+**默认参数**
+```kotlin
+fun addEvent(title: String, description: String = "") {
+    // description 有默认值，调用时可省略
+}
+```
+
+### Android 基础
+
+#### 1. Activity 生命周期（Day 1）
 ```kotlin
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -543,18 +613,27 @@ Toast.makeText(this, "提示内容", Toast.LENGTH_SHORT).show()
 
 ## 📈 项目统计
 
-### Day 1 统计
-- **新增文件**：3 个
-- **修改文件**：2 个
-- **代码行数**：约 50 行
-- **开发用时**：3 小时
-- **遇到的坑**：3 个（全部解决）
+### 累计统计（截至 Day 2）
+- **完成天数**：2 天
+- **累计用时**：5 小时
+- **总文件数**：6 个
+  - MainActivity.kt（主程序）
+  - activity_main.xml（主布局）
+  - dialog_add_event.xml（对话框布局）
+  - colors.xml（颜色资源）
+  - build.gradle.kts（依赖配置）
+  - AndroidManifest.xml（应用配置）
+- **累计代码行数**：约 130 行
+- **功能完成**：2/8（25%）
+- **遇到的坑**：6 个（全部解决）
 
-### 当前项目统计
-- **完成度**：10%
-- **总文件数**：5 个
-- **总代码行数**：约 50 行
-- **功能完成**：1/8
+### Day 2 统计
+- **新增文件**：1 个（dialog_add_event.xml）
+- **修改文件**：2 个（MainActivity.kt、activity_main.xml）
+- **新增代码行数**：约 80 行
+- **开发用时**：2 小时
+- **遇到的坑**：3 个（全部解决）
+- **进度提升**：10% → 20%
 
 ---
 
@@ -686,30 +765,320 @@ Kotlin 日历（进行中）
 
 ---
 
-### Day 02 - 添加和显示日程 ⏳
+### Day 02 - 添加和显示日程 ✅
+
+**日期**：2025年11月04日  
+**用时**：约2小时  
+**完成度**：✅ 100%
+
+#### 📋 今日任务完成情况
+
+- [x] 实现添加日程对话框（Material Design 风格）
+- [x] 支持输入标题 + 描述
+- [x] 日程列表卡片式显示
+- [x] 实现长按删除功能
+- [x] 优化界面样式和用户体验
+
+#### 💻 写了哪些代码
+
+**1. 自定义对话框布局 (dialog_add_event.xml)**
+
+```xml
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Material 输入框 -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="日程标题"
+        app:boxBackgroundMode="outline">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
+    
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="详细描述（可选）"
+        app:boxBackgroundMode="outline">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
+</LinearLayout>
+```
+
+**2. 添加日程功能 (MainActivity.kt)**
+
+```kotlin
+// 添加日程函数
+private fun addEvent(title: String, description: String = "") {
+    val event = buildString {
+        append("┌────────────────────────\n")
+        append("│ 📅 $dateStr\n")
+        append("│ 📝 $title\n")
+        if (description.isNotEmpty()) {
+            append("│ 💬 $description\n")
+        }
+        append("└────────────────────────")
+    }
+    eventsList.add(event)
+    updateEventsList()
+}
+
+// 显示添加对话框
+private fun showAddEventDialog() {
+    val view = layoutInflater.inflate(R.layout.dialog_add_event, null)
+    val etTitle = view.findViewById<TextInputEditText>(R.id.etTitle)
+    val etDescription = view.findViewById<TextInputEditText>(R.id.etDescription)
+    
+    AlertDialog.Builder(this)
+        .setTitle("添加日程")
+        .setView(view)
+        .setPositiveButton("确定") { _, _ ->
+            val title = etTitle.text.toString().trim()
+            val desc = etDescription.text.toString().trim()
+            if (title.isNotEmpty()) {
+                addEvent(title, desc)
+            }
+        }
+        .setNegativeButton("取消", null)
+        .show()
+}
+```
+
+**3. 长按删除功能**
+
+```kotlin
+// 长按删除
+tvEvents.setOnLongClickListener {
+    showDeleteDialog()
+    true
+}
+
+// 删除对话框
+private fun showDeleteDialog() {
+    if (eventsList.isEmpty()) {
+        Toast.makeText(this, "没有日程可删除", Toast.LENGTH_SHORT).show()
+        return
+    }
+    
+    val items = eventsList.mapIndexed { index, event ->
+        "日程 ${index + 1}"
+    }.toTypedArray()
+    
+    AlertDialog.Builder(this)
+        .setTitle("选择要删除的日程")
+        .setItems(items) { _, which ->
+            eventsList.removeAt(which)
+            updateEventsList()
+            Toast.makeText(this, "已删除", Toast.LENGTH_SHORT).show()
+        }
+        .setNegativeButton("取消", null)
+        .show()
+}
+```
+
+#### 🎨 界面优化亮点
+
+1. **Material Design 输入框**
+   - 更专业的 UI
+   - 外边框样式 (`boxBackgroundMode="outline"`)
+   - 浮动提示标签
+
+2. **卡片式布局**
+   - 用 Unicode 字符绘制边框
+   - 清晰的视觉层次
+   - Emoji 图标：📅📝💬
+
+3. **长按删除**
+   - 更符合移动端操作习惯
+   - 弹出选择对话框
+   - 删除后 Toast 提示
+
+4. **等宽字体**
+   - 让框线对齐美观
+   - 使用 `android:fontFamily="monospace"`
+
+5. **浅灰背景 + 白色卡片**
+   - 层次分明
+   - 符合 Material Design 规范
+
+#### 💡 今日学到的知识
+
+**Kotlin 实用技巧**
+
+1. **buildString {}**
+   ```kotlin
+   val str = buildString {
+       append("第一行\n")
+       append("第二行")
+   }
+   // 类似 JavaScript 的数组 join()
+   ```
+
+2. **字符串判断**
+   ```kotlin
+   str.isNotEmpty()  // 非空判断
+   str.isEmpty()     // 空判断
+   str.trim()        // 去除首尾空格
+   ```
+
+3. **mapIndexed**
+   ```kotlin
+   eventsList.mapIndexed { index, event ->
+       "日程 ${index + 1}"
+   }
+   // 带索引的 map，类似 JS 的 map((item, index) => ...)
+   ```
+
+4. **默认参数**
+   ```kotlin
+   fun addEvent(title: String, description: String = "") {
+       // description 有默认值，调用时可省略
+   }
+   ```
+
+**Android UI 组件**
+
+1. **TextInputLayout**
+   - Material Design 输入框
+   - 支持浮动标签
+   - 支持错误提示
+
+2. **AlertDialog**
+   - 标准对话框
+   - `.setTitle()` 设置标题
+   - `.setView()` 自定义布局
+   - `.setPositiveButton()` 确定按钮
+   - `.setNegativeButton()` 取消按钮
+   - `.setItems()` 列表选择
+
+3. **LayoutInflater**
+   - 将 XML 布局转为 View 对象
+   - `layoutInflater.inflate(R.layout.xxx, null)`
+
+4. **长按事件**
+   ```kotlin
+   view.setOnLongClickListener {
+       // 处理长按
+       true  // 返回 true 表示消费事件
+   }
+   ```
+
+#### 🐛 遇到的小坑
+
+**坑 1：Material 组件找不到**
+
+**问题**：
+```
+Unresolved reference: TextInputLayout
+```
+
+**解决**：
+- 在 `build.gradle.kts` 添加 Material 依赖
+- `implementation("com.google.android.material:material:1.10.0")`
+- Sync Gradle
+
+**坑 2：输入框获取不到值**
+
+**原因**：
+- 用了 `EditText` 而不是 `TextInputEditText`
+- Material 组件需要配套使用
+
+**解决**：
+- 改为 `TextInputEditText`
+
+**坑 3：长按删除没反应**
+
+**原因**：
+- 忘记 `return true`
+- 事件被其他监听器消费了
+
+**解决**：
+- `setOnLongClickListener` 返回 `true`
+
+#### 🎯 今日成果
+
+**功能演示**
+- ✅ 点击"添加日程"按钮弹出对话框
+- ✅ 输入标题和描述
+- ✅ 确定后显示在列表中（卡片式）
+- ✅ 长按日程列表弹出删除选择
+- ✅ 选择后删除，Toast 提示
+
+**代码统计**
+- 新增文件：1 个（dialog_add_event.xml）
+- 修改文件：2 个（MainActivity.kt、activity_main.xml）
+- 新增代码：约 80 行
+- 累计代码：约 130 行
+
+**界面效果**
+- Material Design 风格
+- 卡片式日程展示
+- 响应式交互
+
+#### 💭 心得体会
+
+**进展顺利**
+- ✅ Material 组件很好用，UI 质量高
+- ✅ buildString 比字符串拼接优雅多了
+- ✅ Kotlin 的扩展函数很方便（isNotEmpty 等）
+- ✅ 进度超预期，比计划快 1 小时
+
+**遇到的挑战**
+- ⚠️ Material 组件需要额外依赖
+- ⚠️ 第一次用 LayoutInflater，需要理解
+- ⚠️ Unicode 边框在不同字体下可能不对齐
+
+**经验总结**
+1. Material Design 组件能大幅提升 UI 质量
+2. 自定义对话框比直接输入灵活得多
+3. 长按交互更符合移动端习惯
+4. Kotlin 的语法糖让代码更简洁
+
+#### 📝 明日计划
+
+**Day 3 目标**：Room 数据库 - 让数据永久保存
+
+**核心任务**：
+- [ ] 添加 Room 依赖（数据库框架）
+- [ ] 创建 Event 实体类（@Entity）
+- [ ] 创建 EventDao（数据访问接口）
+- [ ] 创建 AppDatabase（数据库实例）
+- [ ] 实现数据库 CRUD 操作
+- [ ] 重启 App 数据还在
+
+**预计难度**：⭐⭐⭐⭐  
+**预计用时**：3-4 小时
+
+---
+
+**Day 2 完成！界面美观功能完整！** 🎉
+
+**今日评分**：⭐⭐⭐⭐⭐ (5/5) - 超出预期，比计划快！
+
+---
+
+### Day 03 - Room 数据库保存 ⏳
 
 **日期**：2025年11月05日（预计）  
 **预计用时**：3-4 小时  
 **完成度**：⏳ 待开始
 
 #### 计划任务
-- [ ] 创建添加日程的 Dialog
-- [ ] 实现添加日程功能
-- [ ] 使用 RecyclerView 显示日程列表
-- [ ] 点击日期弹出添加界面
-
----
-
-### Day 03 - 数据持久化 ⏳
-
-**日期**：2025年11月06日（预计）  
-**完成度**：⏳ 待开始
-
-#### 计划任务
-- [ ] 选择数据存储方案（SharedPreferences 或 SQLite）
-- [ ] 实现数据保存
-- [ ] 实现数据读取
-- [ ] 应用重启后数据保留
+- [ ] 添加 Room 依赖
+- [ ] 创建 Event 实体类（@Entity）
+- [ ] 创建 EventDao（数据访问接口）
+- [ ] 创建 AppDatabase
+- [ ] 实现数据库 CRUD
+- [ ] 重启 App 数据保留
 
 ---
 
