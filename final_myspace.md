@@ -32,9 +32,15 @@
 - **包管理器**：npm
 
 ### 后端技术
-- **API 服务器**：RESTful API
+- **API 服务器**：RESTful API（第三方提供）
 - **认证方式**：JWT (JSON Web Token)
 - **数据库**：MySQL（通过后端 API 访问）
+
+### 项目架构
+- **架构模式**：前后端分离
+- **通信方式**：RESTful API + JWT Token
+- **状态管理**：Vuex 集中式状态管理
+- **组件设计**：单一职责原则，组件高度解耦
 
 ## 项目结构
 
@@ -482,6 +488,17 @@ final_myspace/
 - **开发状态**：已完成 ✅
 - **兼容性**：现代浏览器（Chrome 90+, Firefox 88+, Safari 14+, Edge 90+）
 
+### 项目规模（实际统计）
+- **核心代码文件**: 17 个
+  - Vue 组件: 12 个（ContentBase、NavBar、UserProfileInfo、UserProfilePosts、UserProfileWrite、HomeView、LoginView、RegisterView、UserListView、UserProfileView、NotFoundView、App）
+  - Vuex 模块: 2 个（index.js、user.js）
+  - Router 配置: 1 个（router/index.js）
+  - Main 入口: 1 个（main.js）
+  - 配置文件: 1 个（vue.config.js）
+- **估计代码行数**: 3,000+ 行
+- **API 接口调用**: 10+ 个
+- **路由页面**: 6 个
+
 ## 更新日志
 
 ### v1.0.0 (2025-10-12) 🎉
@@ -607,11 +624,16 @@ final_myspace/
 
 ---
 
-## 🔗 相关项目
+## 🔗 相关项目（Final 系列）
 
-- **Final_KOF** - 拳皇格斗游戏 (已完成 ✅)
-- **Final_MySpace** - 社交空间平台 (已完成 ✅ - 100%)
-- **更多项目敬请期待...**
+| 序号 | 项目 | 状态 | 技术栈 |
+|------|------|------|--------|
+| 1 | Final_KOF | ✅ 100% | JavaScript + Canvas |
+| 2 | **Final_MySpace** | ✅ 100% | **Vue3 + Vuex** |
+| 3 | Final_AcApp | ✅ 100% | Django + Channels |
+| 4 | Final_KOB | ✅ 100% | Spring Boot + 微服务 |
+
+**Final 系列全部完成！** 🎉
 
 ---
 

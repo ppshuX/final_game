@@ -349,14 +349,29 @@
 
 ## 📈 项目统计
 
-### 代码统计
-- **总文件数**：90+ 个文件
-- **代码行数**：8000+ 行
+### 代码统计（实际统计）
+- **核心代码文件**：84 个（不含Django框架和第三方库）
+  - Python 文件: 39 个（Views、URLs、Models、Consumers等）
+  - JavaScript 游戏脚本: 14 个
+  - 静态资源/模板: 31 个
+- **估计代码行数**：6,500+ 行（纯手写代码）
 - **主要模块**：7个核心功能模块
 - **API接口**：30+ 个RESTful API
 - **WebSocket事件**：15+ 个实时事件
 - **JWT认证**：完整的Token认证系统
-- **静态资源**：Django REST Framework完整集成
+- **Django REST Framework**：完整集成
+
+### 文件详细统计
+- **Python 文件**: 39 个
+  - Views: 15 个（settings 7个 + acwing授权 7个 + 其他1个）
+  - URLs: 10 个（路由配置）
+  - Models: 2 个（Player 模型等）
+  - Consumers: 2 个（WebSocket 消费者）
+  - 其他: 10 个（配置、中间件、测试等）
+- **JavaScript 游戏脚本**: 14 个
+  - 游戏核心脚本（playground/socket/multiplayer）
+  - 设置页面脚本（settings）
+- **静态资源/模板**: 31 个（HTML、CSS、images）
 
 ### 功能完成度
 - **用户系统**：100% ✅
@@ -372,12 +387,19 @@
 - **后端框架**：Django 4.x
 - **API框架**：Django REST Framework
 - **实时通信**：Django Channels + WebSocket
-- **消息队列**：Redis
+- **消息队列**：Redis（Channel Layer）
 - **数据库**：MySQL
-- **RPC服务**：Thrift
-- **认证系统**：JWT Token + REST API
+- **RPC服务**：Thrift（匹配系统微服务）
+- **认证系统**：JWT Token + OAuth2.0
 - **前端技术**：JavaScript + Canvas + Bootstrap
 - **架构模式**：微服务 + 前后端分离
+
+### 项目架构
+- **主服务**：Django + Channels（用户、对战、聊天）
+- **匹配服务**：Thrift RPC 独立服务（智能匹配）
+- **前端**：Django 模板 + JavaScript 游戏引擎
+- **实时通信**：WebSocket（房间管理、状态同步）
+- **数据存储**：MySQL（用户、对战记录）+ Redis（消息队列）
 
 ---
 
@@ -410,3 +432,18 @@
 ⭐ 如果这个项目对你有帮助，请给它一个 Star！
 
 🎮 **Let's build something amazing together!**
+
+---
+
+## 📊 Final 系列项目进展
+
+Final_AcApp 是 **Final 系列**的第三个项目：
+
+| 序号 | 项目 | 状态 | 技术栈 |
+|------|------|------|--------|
+| 1 | Final_KOF | ✅ 100% | JavaScript + Canvas |
+| 2 | Final_MySpace | ✅ 100% | Vue3 + Vuex |
+| 3 | **Final_AcApp** | ✅ 100% | **Django + Channels** |
+| 4 | Final_KOB | ✅ 100% | Spring Boot + 微服务 |
+
+**Final 系列全部完成！** 🎉
