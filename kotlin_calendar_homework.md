@@ -15,19 +15,21 @@
 ## 📊 项目整体进度
 
 ```
-████████████████████░░░░░░░░░░░░░░░░░░░░ 40%
+████████████████████████░░░░░░░░░░░░░░░░ 60%
 
 Day 1: 基础日历界面 ✅
 Day 2: 添加和显示日程 ✅
 Day 3: Room 数据库集成 ✅
 Day 4: RecyclerView 列表优化 ✅
-Day 5-10: 待开发 ⏳
+Day 5: 编辑功能 ✅
+Day 6: 时间选择器 ✅
+Day 7-10: 待开发 ⏳
 ```
 
 **项目启动**：2025年11月4日  
 **预计完成**：2025年11月14日  
 **开发状态**：进行中  
-**当前阶段**：Day 4 已完成 - RecyclerView 性能优化！
+**当前阶段**：Day 6 已完成 - 时间选择器集成完毕！
 
 ---
 
@@ -39,8 +41,8 @@ Day 5-10: 待开发 ⏳
 | **Day 2** | 能添加和显示日程 | ✅ 完成 | 2h | Material Dialog + 卡片布局 |
 | **Day 3** | Room 数据库集成 | ✅ 完成 | 2h | Room + 协程 + 真机测试 |
 | **Day 4** | RecyclerView 列表优化 | ✅ 完成 | 1h | Adapter + ViewHolder + 卡片样式 |
-| **Day 5** | 编辑和删除 | ⏳ 计划中 | - | CRUD完整实现 |
-| **Day 6** | 时间选择器 | ⏳ 计划中 | - | TimePicker + DatePicker |
+| **Day 5** | 编辑功能 | ✅ 完成 | 0.5h | 编辑对话框 + 更新数据库 |
+| **Day 6** | 时间选择器 | ✅ 完成 | 0.5h | TimePickerDialog + 时间格式化 |
 | **Day 7** | 多视图切换 | ⏳ 计划中 | - | 周视图、日视图 |
 | **Day 8** | 提醒功能 | ⏳ 计划中 | - | Notification + AlarmManager |
 | **Day 9** | 扩展功能 + 优化 | ⏳ 计划中 | - | 性能优化、功能完善 |
@@ -725,9 +727,9 @@ Toast.makeText(this, "提示内容", Toast.LENGTH_SHORT).show()
 
 ## 📈 项目统计
 
-### 累计统计（截至 Day 4）
-- **完成天数**：4 天
-- **累计用时**：8 小时
+### 累计统计（截至 Day 6）
+- **完成天数**：6 天
+- **累计用时**：9 小时
 - **总文件数**：11 个
   - **业务代码**：
     - MainActivity.kt（主程序）
@@ -737,25 +739,25 @@ Toast.makeText(this, "提示内容", Toast.LENGTH_SHORT).show()
     - EventAdapter.kt（RecyclerView 适配器）
   - **布局文件**：
     - activity_main.xml（主布局）
-    - dialog_add_event.xml（对话框布局）
+    - dialog_add_event.xml（对话框布局，支持时间选择）
     - item_event.xml（卡片布局）
   - **配置文件**：
     - colors.xml（颜色资源）
     - build.gradle.kts（依赖配置）
     - AndroidManifest.xml（应用配置）
-- **累计代码行数**：约 310 行
-- **功能完成**：4/8（50%）
+- **累计代码行数**：约 380 行
+- **功能完成**：6/10（60%）
 - **遇到的坑**：9 个（全部解决）
 - **数据库规模**：1 张表（events），4 个字段
 
-### Day 4 统计
-- **新增文件**：2 个（EventAdapter.kt、item_event.xml）
-- **修改文件**：2 个（MainActivity.kt、activity_main.xml）
-- **新增代码行数**：约 80 行
+### Day 5-6 统计
+- **新增功能**：编辑功能 + 时间选择器
+- **修改文件**：2 个（MainActivity.kt、dialog_add_event.xml）
+- **新增代码行数**：约 70 行
 - **开发用时**：1 小时
 - **遇到的坑**：0 个（流畅完成）
-- **进度提升**：30% → 40%
-- **技术突破**：RecyclerView、ViewHolder 复用、Material Card
+- **进度提升**：40% → 60%
+- **技术突破**：编辑模式对话框、TimePickerDialog 系统组件、Lambda 回调
 
 ---
 
@@ -1870,30 +1872,522 @@ loadAllEvents()
 
 ---
 
-### Day 04 - 列表显示优化 ⏳
+### Day 04 - RecyclerView 列表优化 ✅
 
-**日期**：2025年11月07日（预计）  
-**完成度**：⏳ 待开始
+**日期**：2025年11月05日  
+**用时**：约1小时  
+**完成度**：✅ 100%
+
+#### 📋 今日任务完成情况
+
+- [x] 创建卡片式列表项布局（item_event.xml）
+- [x] 创建 EventAdapter 适配器
+- [x] 用 RecyclerView 替换 TextView
+- [x] 实现点击卡片查看详情
+- [x] 实现长按卡片删除确认
+- [x] Material Design 卡片样式
+
+#### 💻 写了哪些代码
+
+**1. 卡片布局 (item_event.xml)**
+
+```xml
+<com.google.android.material.card.MaterialCardView
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp">
+    
+    <LinearLayout>
+        <!-- 标题（粗体、大字） -->
+        <TextView android:id="@+id/tvTitle"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+        
+        <!-- 日期时间（带图标） -->
+        <TextView android:id="@+id/tvDateTime"
+            android:textSize="14sp"
+            app:drawableStartCompat="@android:drawable/ic_menu_today" />
+        
+        <!-- 描述（灰色、可省略） -->
+        <TextView android:id="@+id/tvDescription"
+            android:textSize="14sp"
+            android:maxLines="2" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>
+```
+
+**2. EventAdapter 适配器**
+
+```kotlin
+class EventAdapter(
+    private var events: List<Event>,
+    private val onItemClick: (Event) -> Unit,
+    private val onItemLongClick: (Event) -> Unit
+) : RecyclerView.Adapter<EventAdapter.EventViewHolder>() {
+    // ViewHolder - 持有卡片里的控件
+    class EventViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val tvTitle: TextView = view.findViewById(R.id.tvTitle)
+        val tvDateTime: TextView = view.findViewById(R.id.tvDateTime)
+        val tvDescription: TextView = view.findViewById(R.id.tvDescription)
+    }
+    
+    // 创建 ViewHolder（加载布局模板）
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventViewHolder {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_event, parent, false)
+        return EventViewHolder(view)
+    }
+    
+    // 绑定数据到 ViewHolder
+    override fun onBindViewHolder(holder: EventViewHolder, position: Int) {
+        val event = events[position]
+        
+        holder.tvTitle.text = event.title
+        holder.tvDateTime.text = formatDate(event.dateTime)
+        holder.tvDescription.text = event.description
+        
+        // 点击和长按事件
+        holder.itemView.setOnClickListener { onItemClick(event) }
+        holder.itemView.setOnLongClickListener { onItemLongClick(event); true }
+    }
+    
+    override fun getItemCount() = events.size
+    
+    fun updateEvents(newEvents: List<Event>) {
+        events = newEvents
+        notifyDataSetChanged()
+    }
+}
+```
+
+**3. MainActivity 改造**
+
+```kotlin
+// 初始化 RecyclerView
+adapter = EventAdapter(
+    events = emptyList(),
+    onItemClick = { event ->
+        showEventDetails(event)  // 点击显示详情
+    },
+    onItemLongClick = { event ->
+        showDeleteConfirmDialog(event)  // 长按删除
+    })
+
+recyclerView.layoutManager = LinearLayoutManager(this)
+recyclerView.adapter = adapter
+
+// 更新列表（超简单）
+private fun updateEventsList() {
+    adapter.updateEvents(eventsList)
+}
+
+// 显示详情对话框
+private fun showEventDetails(event: Event) {
+    AlertDialog.Builder(this)
+        .setTitle("📋 日程详情")
+        .setMessage("📅 日期：...\n📝 标题：...\n💬 描述：...")
+        .setPositiveButton("确定", null)
+        .setNegativeButton("删除") { _, _ -> deleteEvent(event) }
+        .show()
+}
+```
+
+#### 🎨 优化了什么
+
+**视觉效果**：
+- ✅ 每个日程独立卡片（Material Card）
+- ✅ 圆角 12dp + 阴影 4dp
+- ✅ 标题粗体大字
+- ✅ 日期带图标
+- ✅ 描述灰色小字，最多 2 行
+
+**交互优化**：
+- ✅ 点击卡片 → 查看详情（可直接删除）
+- ✅ 长按卡片 → 删除确认
+- ✅ 每个日程独立操作，不用选择列表
+
+**性能优化**：
+- ✅ ViewHolder 复用机制
+- ✅ 只创建屏幕可见的卡片
+- ✅ 滚动流畅，即使有 100+ 日程
+
+#### 💡 RecyclerView 复用机制
+
+**原理图**：
+```
+假设有 100 条数据，屏幕只能显示 5 条
+
+创建阶段：
+┌──────────────┐
+│ [卡片 1]     │ ← onCreate(ViewHolder 1)
+│ [卡片 2]     │ ← onCreate(ViewHolder 2)
+│ [卡片 3]     │ ← onCreate(ViewHolder 3)
+│ [卡片 4]     │ ← onCreate(ViewHolder 4)
+│ [卡片 5]     │ ← onCreate(ViewHolder 5)
+└──────────────┘
+只创建了 5 个 ViewHolder！
+
+滚动向下：
+卡片 1 滑出 → 进入回收池
+需要显示卡片 6 → 从回收池取出 ViewHolder 1
+onBindViewHolder(ViewHolder 1, position=5)  // 改数据
+ViewHolder 1 显示 event[5] 的内容
+→ 变成卡片 6！
+
+继续滚动：
+卡片 2 滑出 → 回收
+卡片 7 需要 → 复用 ViewHolder 2
+...
+100 条数据，只创建 5-7 个 ViewHolder！
+```
+
+**对比表格**：
+
+| 方式 | 创建 View 数 | 内存占用 | 滚动性能 |
+|------|-------------|---------|---------|
+| **TextView** | 100 个 | 高 🔴 | 卡 🔴 |
+| **RecyclerView** | 5-7 个 | 低 ✅ | 流畅 ✅ |
+
+#### 📚 RecyclerView vs Vue v-for
+
+**Vue v-for**：
+```vue
+<div v-for="event in events">
+  <!-- 渲染所有数据 -->
+</div>
+```
+- 创建所有 DOM 元素
+- 虚拟 DOM 优化
+- 但还是会创建很多节点
+
+**RecyclerView**：
+```kotlin
+RecyclerView.Adapter
+  ↓
+只创建屏幕可见的 View
+  ↓
+滚动时复用 View，只改数据
+```
+- **物理复用**，不是虚拟
+- 性能更强
+
+#### 🎯 核心概念
+
+**ViewHolder（视图持有者）**：
+```kotlin
+class EventViewHolder(view: View) {
+    val tvTitle: TextView = view.findViewById(R.id.tvTitle)
+    val tvDateTime: TextView = view.findViewById(R.id.tvDateTime)
+}
+```
+
+**作用**：
+1. 缓存控件引用（避免重复 findViewById）
+2. 可以被复用
+
+**onCreateViewHolder（创建）**：
+```kotlin
+override fun onCreateViewHolder(...) {
+    val view = inflate(R.layout.item_event)  // 创建卡片
+    return EventViewHolder(view)
+}
+```
+- **只在需要新 View 时调用**
+- 屏幕显示 5 个，就调用 5 次左右
+
+**onBindViewHolder（绑定）**：
+```kotlin
+override fun onBindViewHolder(holder, position) {
+    val event = events[position]
+    holder.tvTitle.text = event.title  // 只改数据
+}
+```
+- **每次显示都会调用**
+- 复用时也会调用
+- 只修改数据，不创建 View
+
+#### 📊 今日成果
+
+**功能完成**
+- ✅ RecyclerView 列表显示
+- ✅ Material Card 卡片样式
+- ✅ 点击查看详情
+- ✅ 长按删除确认
+- ✅ 性能优化（复用机制）
+
+**代码统计**
+- 新增文件：2 个（EventAdapter.kt, item_event.xml）
+- 修改文件：2 个（MainActivity.kt, activity_main.xml）
+- 代码行数：约 80 行
 
 ---
 
-### Day 05 - 编辑功能 + 时间选择器 ⏳
+**Day 4 完成！专业的列表显示！** 🎉
 
-**日期**：2025年11月06日（预计）  
-**预计用时**：2-3 小时  
-**完成度**：⏳ 待开始
-
-#### 计划任务
-- [ ] 点击详情时能编辑日程
-- [ ] 实现编辑对话框（复用添加对话框）
-- [ ] 添加日期选择器（DatePickerDialog）
-- [ ] 添加时间选择器（TimePickerDialog）
-- [ ] 日程支持具体时间（时分秒）
-- [ ] 更新 Event 实体类
+**今日评分**：⭐⭐⭐⭐⭐ (5/5) - 流畅完成，理解深入！
 
 ---
 
-### Day 06 - 数据筛选与搜索 ⏳
+### Day 05 - 编辑功能 ✅
+
+**日期**：2025年11月05日  
+**用时**：约30分钟  
+**完成度**：✅ 100%
+
+#### 📋 今日任务完成情况
+
+- [x] 实现编辑功能（点击详情 → 编辑）
+- [x] 添加/编辑对话框支持编辑模式
+- [x] 更新数据库记录
+- [x] 优化详情对话框（编辑/删除/关闭三个按钮）
+
+#### 💻 写了哪些代码
+
+**编辑功能实现**
+
+```kotlin
+// 1. 对话框支持编辑模式
+private fun showAddEventDialog(eventToEdit: Event? = null) {
+    val dialogView = layoutInflater.inflate(R.layout.dialog_add_event, null)
+    
+    // 如果是编辑模式，填充现有数据
+    if (eventToEdit != null) {
+        etTitle?.setText(eventToEdit.title)
+        etDesc?.setText(eventToEdit.description)
+        calendar.timeInMillis = eventToEdit.dateTime
+    }
+    
+    // 保存时判断是新增还是编辑
+    if (eventToEdit != null) {
+        updateEvent(eventToEdit.id, title, desc, dateTime)
+    } else {
+        addEvent(title, desc, dateTime)
+    }
+}
+
+// 2. 更新日程到数据库
+private fun updateEvent(id: Long, title: String, description: String, dateTime: Long) {
+    lifecycleScope.launch(Dispatchers.IO) {
+        val event = Event(id = id, title = title, description = description, dateTime = dateTime)
+        eventDao.update(event)
+        // 重新加载并刷新界面
+    }
+}
+
+// 3. 详情对话框新增"编辑"按钮
+AlertDialog.Builder(this)
+    .setTitle("📋 日程详情")
+    .setMessage(...)
+    .setPositiveButton("编辑") { _, _ ->
+        showAddEventDialog(event)  // 传入 event 进入编辑模式
+    }
+    .setNegativeButton("删除") { _, _ -> deleteEvent(event) }
+    .setNeutralButton("关闭", null)
+    .show()
+```
+
+#### 🎯 功能流程
+
+```
+用户点击卡片
+    ↓
+显示详情对话框
+    ↓
+点击"编辑"按钮
+    ↓
+打开添加对话框（编辑模式）
+    ↓
+预填充原数据
+    ↓
+修改标题/时间/描述
+    ↓
+点击"保存"
+    ↓
+调用 updateEvent()
+    ↓
+数据库 UPDATE
+    ↓
+重新加载列表
+    ↓
+界面自动刷新！
+```
+
+#### 📊 今日成果
+
+**功能完成**
+- ✅ 编辑功能完整实现
+- ✅ 对话框支持编辑模式
+- ✅ 数据库更新操作
+- ✅ UI/UX 优化
+
+**代码统计**
+- 修改文件：1 个（MainActivity.kt）
+- 新增代码：约 30 行
+
+---
+
+**Day 5 完成！编辑功能完美运行！** ✅
+
+**今日评分**：⭐⭐⭐⭐⭐ (5/5) - 功能实现顺利！
+
+---
+
+### Day 06 - 时间选择器 ✅
+
+**日期**：2025年11月05日  
+**用时**：约30分钟  
+**完成度**：✅ 100%
+
+#### 📋 今日任务完成情况
+
+- [x] 在对话框中添加时间输入框
+- [x] 实现 TimePickerDialog 时间选择器
+- [x] 添加/编辑时能选具体时间（小时:分钟）
+- [x] 时间格式化显示（yyyy-MM-dd HH:mm）
+- [x] 卡片和详情都显示具体时间
+
+#### 💻 写了哪些代码
+
+**1. 对话框添加时间输入框**
+
+```xml
+<!-- dialog_add_event.xml -->
+<TextInputLayout
+    android:hint="时间"
+    app:startIconDrawable="@android:drawable/ic_menu_recent_history">
+    
+    <TextInputEditText
+        android:id="@+id/etTime"
+        android:focusable="false"
+        android:clickable="true" />
+</TextInputLayout>
+```
+
+**关键属性**：
+- `focusable="false"` - 不能输入，只能点击
+- `clickable="true"` - 可以点击弹出选择器
+
+**2. TimePickerDialog 实现**
+
+```kotlin
+// 显示时间选择器
+private fun showTimePicker(calendar: Calendar, onTimeSelected: (Int, Int) -> Unit) {
+    val hour = calendar.get(Calendar.HOUR_OF_DAY)
+    val minute = calendar.get(Calendar.MINUTE)
+    
+    TimePickerDialog(
+        this,                        // Context
+        { _, selectedHour, selectedMinute ->
+            onTimeSelected(selectedHour, selectedMinute)
+        },
+        hour,                        // 初始小时
+        minute,                      // 初始分钟
+        true                         // 24小时制
+    ).show()
+}
+
+// 更新时间显示
+private fun updateTimeDisplay(editText: TextInputEditText?, calendar: Calendar) {
+    val timeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+    editText?.setText(timeFormat.format(calendar.time))
+}
+```
+
+**3. 在对话框中使用**
+
+```kotlin
+// 显示初始时间
+updateTimeDisplay(etTime, calendar)
+
+// 点击时间框弹出选择器
+etTime?.setOnClickListener {
+    showTimePicker(calendar) { hour, minute ->
+        calendar.set(Calendar.HOUR_OF_DAY, hour)
+        calendar.set(Calendar.MINUTE, minute)
+        updateTimeDisplay(etTime, calendar)
+    }
+}
+```
+
+#### 🎨 TimePickerDialog 特点
+
+**系统自带的优势**：
+- ✅ Material Design 风格
+- ✅ 圆形时钟界面
+- ✅ 自动适配主题色
+- ✅ 支持 12/24 小时制切换
+- ✅ 键盘输入模式（点击键盘图标）
+- ✅ 无需第三方库
+
+**对比 Web**：
+```html
+<!-- Web 需要这样 -->
+<input type="time">  <!-- 各浏览器样式不统一 -->
+
+<!-- 或用第三方库 -->
+<el-time-picker />
+<VueDatePicker />
+```
+
+**Android 一行搞定**：
+```kotlin
+TimePickerDialog(...).show()  // 完美！
+```
+
+#### 💡 学到的知识
+
+**系统对话框组件**
+
+| 组件 | 用途 | 代码 |
+|------|------|------|
+| `TimePickerDialog` | 选择时间 | `TimePickerDialog(...).show()` |
+| `DatePickerDialog` | 选择日期 | `DatePickerDialog(...).show()` |
+| `AlertDialog` | 通用对话框 | `AlertDialog.Builder().show()` |
+
+**Lambda 回调**
+
+```kotlin
+showTimePicker(calendar) { hour, minute ->
+    // 选择后的回调
+    calendar.set(Calendar.HOUR_OF_DAY, hour)
+    calendar.set(Calendar.MINUTE, minute)
+}
+```
+
+**类似 JavaScript**：
+```javascript
+showTimePicker(calendar, (hour, minute) => {
+    // 回调函数
+})
+```
+
+#### 📊 今日成果
+
+**功能完成**
+- ✅ 时间选择器集成
+- ✅ 支持选择具体时间（小时:分钟）
+- ✅ 时间格式化显示
+- ✅ 编辑模式预填充时间
+
+**用户体验提升**
+- ✅ 添加日程时能选具体时间
+- ✅ 编辑时能修改时间
+- ✅ 时间显示更精确（到分钟）
+- ✅ Material Design 统一风格
+
+**代码统计**
+- 修改文件：2 个（MainActivity.kt, dialog_add_event.xml）
+- 新增代码：约 40 行
+
+---
+
+**Day 5-6 完成！编辑 + 时间选择器全部搞定！** 🎉
+
+**今日评分**：⭐⭐⭐⭐⭐ (5/5) - 系统组件太方便了！
+
+---
+
+### Day 07 - 数据筛选与搜索 ⏳
 
 **日期**：2025年11月07日（预计）  
 **完成度**：⏳ 待开始
