@@ -15,17 +15,18 @@
 ## 📊 项目整体进度
 
 ```
-██████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 20%
+███████████████░░░░░░░░░░░░░░░░░░░░░░░░░ 30%
 
 Day 1: 基础日历界面 ✅
 Day 2: 添加和显示日程 ✅
-Day 3-10: 待开发 ⏳
+Day 3: Room 数据库集成 ✅
+Day 4-10: 待开发 ⏳
 ```
 
 **项目启动**：2025年11月4日  
 **预计完成**：2025年11月14日  
 **开发状态**：进行中  
-**当前阶段**：Day 2 已完成
+**当前阶段**：Day 3 已完成 - 数据库持久化实现！
 
 ---
 
@@ -35,7 +36,7 @@ Day 3-10: 待开发 ⏳
 |------|---------|------|------|------|
 | **Day 1** | 把日历显示出来 | ✅ 完成 | 3h | 解决依赖冲突，原生CalendarView |
 | **Day 2** | 能添加和显示日程 | ✅ 完成 | 2h | Material Dialog + 卡片布局 |
-| **Day 3** | 数据库保存 | ⏳ 计划中 | - | SharedPreferences 或 SQLite |
+| **Day 3** | Room 数据库集成 | ✅ 完成 | 2h | Room + 协程 + 真机测试 |
 | **Day 4** | 列表显示优化 | ⏳ 计划中 | - | UI美化 + 交互优化 |
 | **Day 5** | 编辑和删除 | ⏳ 计划中 | - | CRUD完整实现 |
 | **Day 6** | 时间选择器 | ⏳ 计划中 | - | TimePicker + DatePicker |
@@ -358,6 +359,69 @@ view.setOnLongClickListener {
 | `LinearLayout` | `flex-direction: column` | 垂直布局 |
 | `activity_main.xml` | `index.html` | 界面文件 |
 | `MainActivity.kt` | `main.js` | 逻辑代码 |
+
+#### 6. Room 数据库（Day 3）
+
+**Entity（实体类）**
+```kotlin
+@Entity(tableName = "events")
+data class Event(
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
+    val title: String
+)
+```
+
+**DAO（数据访问对象）**
+```kotlin
+@Dao
+interface EventDao {
+    @Query("SELECT * FROM events")
+    suspend fun getAllEvents(): List<Event>
+    
+    @Insert
+    suspend fun insert(event: Event): Long
+    
+    @Delete
+    suspend fun delete(event: Event)
+}
+```
+
+**Database（数据库类）**
+```kotlin
+@Database(entities = [Event::class], version = 1)
+abstract class AppDatabase : RoomDatabase() {
+    abstract fun eventDao(): EventDao
+    
+    companion object {
+        @Volatile
+        private var INSTANCE: AppDatabase? = null
+        
+        fun getDatabase(context: Context): AppDatabase {
+            return INSTANCE ?: synchronized(this) {
+                val instance = Room.databaseBuilder(
+                    context,
+                    AppDatabase::class.java,
+                    "calendar_database"
+                ).build()
+                INSTANCE = instance
+                instance
+            }
+        }
+    }
+}
+```
+
+**Room vs Django ORM**
+
+| Room | Django | 说明 |
+|------|--------|------|
+| `@Entity` | `models.Model` | 定义模型 |
+| `@PrimaryKey` | `AutoField(primary_key=True)` | 主键 |
+| `@Query("SELECT...")` | `Event.objects.all()` | 查询 |
+| `@Insert` | `Event.objects.create()` | 插入 |
+| `@Delete` | `event.delete()` | 删除 |
+| `suspend fun` | `async def` | 异步函数 |
 | `res/values/colors.xml` | CSS 变量 | 颜色定义 |
 
 #### 🎯 今日成果
@@ -613,27 +677,35 @@ Toast.makeText(this, "提示内容", Toast.LENGTH_SHORT).show()
 
 ## 📈 项目统计
 
-### 累计统计（截至 Day 2）
-- **完成天数**：2 天
-- **累计用时**：5 小时
-- **总文件数**：6 个
-  - MainActivity.kt（主程序）
-  - activity_main.xml（主布局）
-  - dialog_add_event.xml（对话框布局）
-  - colors.xml（颜色资源）
-  - build.gradle.kts（依赖配置）
-  - AndroidManifest.xml（应用配置）
-- **累计代码行数**：约 130 行
-- **功能完成**：2/8（25%）
-- **遇到的坑**：6 个（全部解决）
+### 累计统计（截至 Day 3）
+- **完成天数**：3 天
+- **累计用时**：7 小时
+- **总文件数**：9 个
+  - **业务代码**：
+    - MainActivity.kt（主程序）
+    - Event.kt（实体类）
+    - EventDao.kt（数据访问接口）
+    - AppDatabase.kt（数据库单例）
+  - **布局文件**：
+    - activity_main.xml（主布局）
+    - dialog_add_event.xml（对话框布局）
+  - **配置文件**：
+    - colors.xml（颜色资源）
+    - build.gradle.kts（依赖配置）
+    - AndroidManifest.xml（应用配置）
+- **累计代码行数**：约 230 行
+- **功能完成**：3/8（37.5%）
+- **遇到的坑**：9 个（全部解决）
+- **数据库规模**：1 张表（events），4 个字段
 
-### Day 2 统计
-- **新增文件**：1 个（dialog_add_event.xml）
-- **修改文件**：2 个（MainActivity.kt、activity_main.xml）
-- **新增代码行数**：约 80 行
+### Day 3 统计
+- **新增文件**：3 个（Event.kt、EventDao.kt、AppDatabase.kt）
+- **修改文件**：2 个（MainActivity.kt、build.gradle.kts）
+- **新增代码行数**：约 100 行
 - **开发用时**：2 小时
-- **遇到的坑**：3 个（全部解决）
-- **进度提升**：10% → 20%
+- **遇到的坑**：3 个（虚拟机卡死、协程调度、Flow简化）
+- **进度提升**：20% → 30%
+- **技术突破**：Room 数据库、协程、真机调试
 
 ---
 
@@ -1066,19 +1138,685 @@ Unresolved reference: TextInputLayout
 
 ---
 
-### Day 03 - Room 数据库保存 ⏳
+### Day 03 - Room 数据库集成 ✅
 
-**日期**：2025年11月05日（预计）  
-**预计用时**：3-4 小时  
-**完成度**：⏳ 待开始
+**日期**：2025年11月05日  
+**用时**：约2小时（包括模拟器配置时间）  
+**完成度**：✅ 100%
 
-#### 计划任务
-- [ ] 添加 Room 依赖
-- [ ] 创建 Event 实体类（@Entity）
-- [ ] 创建 EventDao（数据访问接口）
-- [ ] 创建 AppDatabase
-- [ ] 实现数据库 CRUD
-- [ ] 重启 App 数据保留
+#### 📋 今日任务完成情况
+
+- [x] 添加 Room 数据库依赖和 KSP 插件
+- [x] 创建 Event 实体类
+- [x] 创建 EventDao 数据访问接口
+- [x] 创建 AppDatabase 单例类
+- [x] 改造 MainActivity 使用数据库存储
+- [x] 测试数据持久化成功（真机 + 虚拟机）
+- [x] 配置轻量级虚拟机（Pixel 2 API 30）
+
+#### 💻 写了哪些代码
+
+**1. Event 实体类 (Event.kt)**
+
+```kotlin
+package com.ncu.kotlincalendar
+
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "events")
+data class Event(
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
+    
+    val title: String,              // 标题
+    val description: String = "",   // 描述
+    val dateTime: Long,             // 日期时间（时间戳）
+    val createdAt: Long = System.currentTimeMillis()  // 创建时间
+)
+```
+
+**类似 Django ORM**：
+```python
+class Event(models.Model):
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    date_time = models.DateTimeField()
+```
+
+**代码要点**：
+- `@Entity(tableName = "events")` - 声明这是数据库表
+- `@PrimaryKey(autoGenerate = true)` - 自增主键
+- `data class` - Kotlin 数据类，自动生成 equals、hashCode、toString
+- 默认参数值 - `id = 0`, `description = ""`
+
+---
+
+**2. EventDao 接口 (EventDao.kt)**
+
+```kotlin
+package com.ncu.kotlincalendar
+
+import androidx.room.*
+
+@Dao
+interface EventDao {
+    // 查询所有日程（按时间升序）
+    @Query("SELECT * FROM events ORDER BY dateTime ASC")
+    suspend fun getAllEvents(): List<Event>
+    
+    // 插入日程
+    @Insert
+    suspend fun insert(event: Event): Long
+    
+    // 更新日程
+    @Update
+    suspend fun update(event: Event)
+    
+    // 删除日程
+    @Delete
+    suspend fun delete(event: Event)
+    
+    // 根据 ID 查询
+    @Query("SELECT * FROM events WHERE id = :eventId")
+    suspend fun getEventById(eventId: Long): Event?
+}
+```
+
+**类似 Django QuerySet**：
+```python
+Event.objects.all()           # getAllEvents()
+Event.objects.create(...)     # insert()
+event.save()                  # update()
+event.delete()                # delete()
+Event.objects.get(id=1)       # getEventById()
+```
+
+**代码要点**：
+- `@Dao` - Data Access Object（数据访问对象）
+- `@Query` - 自定义 SQL 查询
+- `@Insert`、`@Update`、`@Delete` - Room 自动实现
+- `suspend fun` - 协程函数，支持异步操作
+
+---
+
+**3. AppDatabase 类 (AppDatabase.kt)**
+
+```kotlin
+package com.ncu.kotlincalendar
+
+import android.content.Context
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+
+@Database(entities = [Event::class], version = 1, exportSchema = false)
+abstract class AppDatabase : RoomDatabase() {
+    abstract fun eventDao(): EventDao
+    
+    companion object {
+        @Volatile
+        private var INSTANCE: AppDatabase? = null
+        
+        fun getDatabase(context: Context): AppDatabase {
+            return INSTANCE ?: synchronized(this) {
+                val instance = Room.databaseBuilder(
+                    context.applicationContext,
+                    AppDatabase::class.java,
+                    "calendar_database"
+                ).build()
+                INSTANCE = instance
+                instance
+            }
+        }
+    }
+}
+```
+
+**单例模式（Singleton Pattern）**：
+- 确保全局只有一个数据库实例
+- 避免多次创建导致资源浪费
+- `@Volatile` 保证多线程可见性
+- `synchronized(this)` 保证线程安全
+
+**类似 Django**：
+```python
+# settings.py
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+```
+
+---
+
+**4. MainActivity 改造**
+
+```kotlin
+class MainActivity : AppCompatActivity() {
+    // 数据库相关
+    private lateinit var database: AppDatabase
+    private lateinit var eventDao: EventDao
+    private val eventsList = mutableListOf<Event>()
+    
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        
+        // 初始化数据库
+        database = AppDatabase.getDatabase(this)
+        eventDao = database.eventDao()
+        
+        // 加载所有日程
+        loadAllEvents()
+    }
+    
+    // 加载所有日程
+    private fun loadAllEvents() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            val events = eventDao.getAllEvents()
+            withContext(Dispatchers.Main) {
+                eventsList.clear()
+                eventsList.addAll(events)
+                updateEventsList()
+            }
+        }
+    }
+    
+    // 添加日程（保存到数据库）
+    private fun addEvent(title: String, description: String = "") {
+        lifecycleScope.launch(Dispatchers.IO) {
+            val event = Event(
+                title = title,
+                description = description,
+                dateTime = selectedDateMillis
+            )
+            eventDao.insert(event)
+            
+            // 重新加载数据
+            val events = eventDao.getAllEvents()
+            withContext(Dispatchers.Main) {
+                eventsList.clear()
+                eventsList.addAll(events)
+                updateEventsList()
+                Toast.makeText(this@MainActivity, "✅ 添加成功！", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+    
+    // 删除日程
+    private fun deleteEvent(event: Event) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            eventDao.delete(event)
+            loadAllEvents()
+        }
+    }
+}
+```
+
+**协程调度器**：
+- `Dispatchers.IO` - 用于数据库、网络等 IO 操作
+- `Dispatchers.Main` - 用于 UI 更新
+- `withContext()` - 切换线程
+
+---
+
+**5. build.gradle.kts 配置**
+
+```kotlin
+plugins {
+    id("com.google.devtools.ksp") version "1.9.0-1.0.13"
+}
+
+dependencies {
+    // Room 数据库
+    val room_version = "2.6.0"
+    implementation("androidx.room:room-runtime:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
+    ksp("androidx.room:room-compiler:$room_version")
+    
+    // 协程
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
+}
+```
+
+**依赖说明**：
+- `room-runtime` - Room 核心库
+- `room-ktx` - Kotlin 扩展（协程支持）
+- `room-compiler` - 编译时代码生成（用 KSP 处理）
+- `kotlinx-coroutines-android` - 协程库
+- `lifecycle-runtime-ktx` - 生命周期感知协程
+
+#### 🐛 遇到的坑（详细版）
+
+**坑 1：模拟器配置太高导致电脑卡死** ⚠️
+
+**问题现象**：
+```
+创建 Medium Phone API 36.1 虚拟机
+↓
+运行应用
+↓
+电脑内存占用 94%
+↓
+鼠标无法移动
+↓
+强制重启电脑 💥
+```
+
+**原因分析**：
+- API 36 是 Android 最新版本（2024年10月发布）
+- 需要大量内存和 CPU 资源
+- 同时运行：Chrome（8个标签）+ Android Studio + 虚拟机
+- 电脑总内存：16GB
+- 可用内存：< 2GB
+- 虚拟机默认配置：2GB RAM（占用后系统崩溃）
+
+**尝试的解决方案**：
+1. ❌ 关闭 Chrome → 还是卡
+2. ❌ 降低虚拟机画质 → 运行前就卡死
+3. ✅ **先用真机测试**（华为手机 API 29）
+4. ✅ **创建轻量级虚拟机**（Pixel 2 API 30，1.5GB RAM）
+
+**最终配置**：
+- 设备：Pixel 2
+- API 级别：30（Android 11）
+- RAM：1.5GB
+- 存储：2GB
+- 分辨率：1080x1920（降低到 720p）
+
+**学到的经验**：
+- ✅ 真机调试效率最高、资源占用最少
+- ✅ 虚拟机选择旧版本 API（API 28-30 最稳定）
+- ✅ 开发时关闭不必要的应用
+- ✅ 虚拟机 RAM 配置不要超过系统可用内存的 1/3
+
+---
+
+**坑 2：协程和线程调度** 🔄
+
+**问题现象**：
+```kotlin
+// ❌ 错误写法
+fun addEvent() {
+    eventDao.insert(event)  // 报错：Cannot access database on main thread
+}
+```
+
+**错误信息**：
+```
+java.lang.IllegalStateException: Cannot access database on the main thread
+```
+
+**原因**：
+- Android 规定：**主线程不能执行耗时操作**
+- 数据库操作属于 IO 操作，可能卡住 UI
+- Room 强制要求在后台线程执行
+
+**解决方案**：
+```kotlin
+// ✅ 正确写法
+lifecycleScope.launch(Dispatchers.IO) {  // 后台线程执行数据库操作
+    val events = eventDao.getAllEvents()
+    
+    withContext(Dispatchers.Main) {      // 切换到主线程更新 UI
+        eventsList.clear()
+        eventsList.addAll(events)
+        updateEventsList()  // 更新界面
+    }
+}
+```
+
+**线程调度器对比**：
+
+| 调度器 | 用途 | 类比 Web |
+|--------|------|---------|
+| `Dispatchers.Main` | UI 操作 | 主线程（DOM 操作） |
+| `Dispatchers.IO` | 数据库、网络 | Web Worker |
+| `Dispatchers.Default` | CPU 密集计算 | Web Worker |
+
+**学到的知识**：
+- `lifecycleScope` - 生命周期感知的协程作用域
+- Activity 销毁时自动取消协程，避免内存泄漏
+- `withContext()` 切换线程不会创建新协程
+
+---
+
+**坑 3：从 Flow 到 List 的简化** 📊
+
+**最初设计（复杂版）**：
+```kotlin
+@Query("SELECT * FROM events ORDER BY dateTime ASC")
+fun getAllEvents(): Flow<List<Event>>  // 响应式数据流
+
+// 使用
+eventDao.getAllEvents().collect { events ->
+    updateUI(events)
+}
+```
+
+**遇到的问题**：
+- Flow 需要持续监听，生命周期管理复杂
+- 数据变化时自动更新，但对于简单场景过于复杂
+- 初学者理解成本高
+
+**简化版本（最终采用）**：
+```kotlin
+@Query("SELECT * FROM events ORDER BY dateTime ASC")
+suspend fun getAllEvents(): List<Event>  // 简单查询
+
+// 使用
+val events = eventDao.getAllEvents()  // 直接获取结果
+```
+
+**对比**：
+
+| 方案 | Flow | suspend List |
+|------|------|--------------|
+| **复杂度** | ⭐⭐⭐⭐ | ⭐⭐ |
+| **实时性** | 自动更新 | 手动刷新 |
+| **适用场景** | 实时聊天、股票 | 日历、笔记 |
+| **学习成本** | 高 | 低 |
+
+**学到的经验**：
+- 简单场景不要过度设计
+- Flow 适合需要实时监听的场景
+- 手动刷新对日历应用足够了
+
+#### 💡 今日学到的知识
+
+**1. Room 数据库三件套**
+
+```
+┌─────────────────────────────────────┐
+│         Room Database               │
+│  (抽象数据库类，单例模式)           │
+│                                     │
+│  @Database(entities = [Event::class])│
+│  abstract class AppDatabase         │
+└─────────────────────────────────────┘
+              ↓
+┌─────────────────────────────────────┐
+│         DAO (数据访问层)            │
+│  (定义 CRUD 操作)                   │
+│                                     │
+│  @Dao                               │
+│  interface EventDao {               │
+│    @Query, @Insert, @Delete         │
+│  }                                  │
+└─────────────────────────────────────┘
+              ↓
+┌─────────────────────────────────────┐
+│         Entity (实体类)             │
+│  (对应数据库表)                     │
+│                                     │
+│  @Entity(tableName = "events")      │
+│  data class Event                   │
+└─────────────────────────────────────┘
+```
+
+**对比 Django**：
+
+| Room | Django | 说明 |
+|------|--------|------|
+| `@Entity` | `models.Model` | 定义数据模型 |
+| `@PrimaryKey` | `AutoField(primary_key=True)` | 主键 |
+| `@Dao` | `objects` | 数据访问接口 |
+| `@Query("SELECT...")` | `filter()`, `all()` | 查询 |
+| `@Insert` | `create()` | 插入 |
+| `@Delete` | `delete()` | 删除 |
+
+---
+
+**2. Kotlin 协程（Coroutines）**
+
+**基础概念**：
+```kotlin
+// 1. 启动协程
+lifecycleScope.launch {
+    // 异步代码
+}
+
+// 2. 挂起函数（suspend）
+suspend fun getAllEvents(): List<Event> {
+    // 可以在协程中调用
+}
+
+// 3. 线程切换
+withContext(Dispatchers.IO) {
+    // 切换到 IO 线程
+}
+```
+
+**对比 JavaScript async/await**：
+
+| Kotlin 协程 | JavaScript | 说明 |
+|------------|------------|------|
+| `launch {}` | `async function()` | 启动异步 |
+| `suspend fun` | `async function` | 异步函数 |
+| `withContext()` | - | 切换线程（JS单线程） |
+| `Dispatchers.IO` | - | IO线程池 |
+
+**对比 Python asyncio**：
+
+| Kotlin | Python | 说明 |
+|--------|--------|------|
+| `launch {}` | `asyncio.create_task()` | 创建任务 |
+| `suspend fun` | `async def` | 异步函数 |
+| `Dispatchers.IO` | `asyncio.to_thread()` | 线程池执行 |
+
+---
+
+**3. 数据持久化原理**
+
+**完整流程图**：
+```
+用户添加日程
+    ↓
+MainActivity.addEvent()
+    ↓
+lifecycleScope.launch(Dispatchers.IO) ← 切换到后台线程
+    ↓
+eventDao.insert(event)
+    ↓
+Room 框架
+    ↓
+生成 SQL: INSERT INTO events (title, description, dateTime, createdAt) VALUES (?, ?, ?, ?)
+    ↓
+执行 SQL 写入 SQLite
+    ↓
+数据写入文件: /data/data/com.ncu.kotlincalendar/databases/calendar_database
+    ↓
+返回插入的行 ID
+    ↓
+重新查询所有数据
+    ↓
+withContext(Dispatchers.Main) ← 切换回主线程
+    ↓
+更新 UI 显示
+    ↓
+完成！✅
+
+────────────────────────────
+
+关闭 App（进程结束，内存清空）
+    ↓
+SQLite 文件还在手机存储中 ✅
+    ↓
+重新打开 App
+    ↓
+AppDatabase.getDatabase()
+    ↓
+Room 打开 SQLite 文件
+    ↓
+loadAllEvents()
+    ↓
+执行 SQL: SELECT * FROM events ORDER BY dateTime ASC
+    ↓
+从 SQLite 文件读取数据
+    ↓
+转换为 Event 对象列表
+    ↓
+显示在界面上
+    ↓
+数据恢复！🎉
+```
+
+**就像**：
+- Django 的 `db.sqlite3` 文件
+- MySQL 的 `/var/lib/mysql/` 数据文件
+- 你保存的 Word 文档（关机后还在）
+
+---
+
+**4. 移动应用架构理解**
+
+**Web 应用（集中式）**：
+```
+┌──────────┐
+│  用户 A  │ ─┐
+└──────────┘  │
+              │
+┌──────────┐  │    ┌──────────────┐    ┌──────────────┐
+│  用户 B  │ ─┼───→│  云服务器    │───→│   MySQL 库   │
+└──────────┘  │    │  (Django)    │    │  (唯一数据源)│
+              │    └──────────────┘    └──────────────┘
+┌──────────┐  │
+│  用户 C  │ ─┘
+└──────────┘
+
+所有用户共享同一个数据库
+```
+
+**移动应用（分布式）**：
+```
+┌──────────────────────┐
+│  用户 A 的手机       │
+│  ┌────────────────┐  │
+│  │   SQLite A     │  │  ← 独立的数据库
+│  │  (只有 A 的数据)│  │
+│  └────────────────┘  │
+└──────────────────────┘
+
+┌──────────────────────┐
+│  用户 B 的手机       │
+│  ┌────────────────┐  │
+│  │   SQLite B     │  │  ← 独立的数据库
+│  │  (只有 B 的数据)│  │
+│  └────────────────┘  │
+└──────────────────────┘
+
+每个用户的数据完全独立
+```
+
+**如果需要多设备同步**：
+```
+┌────────────┐
+│ 手机 SQLite│ ←┐
+└────────────┘  │
+                ↓
+            ┌────────┐
+            │  API   │ ←→ ┌──────────────┐
+            │ 服务器 │    │ 云端 MySQL   │
+            └────────┘    └──────────────┘
+                ↑
+┌────────────┐  │
+│ 平板 SQLite│ ←┘
+└────────────┘
+
+本地存储 + 云端同步（双向）
+```
+
+**这就是**：
+- 微信的聊天记录存储方式
+- 有道云笔记的离线功能
+- Keep Notes 的本地优先策略
+
+#### 🎯 今日成果
+
+**功能完成**
+- ✅ 数据库增删查改（CRUD）完整实现
+- ✅ 数据持久化存储（重启不丢失）
+- ✅ 协程异步处理（不卡 UI）
+- ✅ 真机测试通过（华为 API 29）
+- ✅ 虚拟机测试通过（Pixel 2 API 30）
+
+**代码统计**
+- 新增文件：3 个
+  - Event.kt（实体类）
+  - EventDao.kt（数据访问接口）
+  - AppDatabase.kt（数据库单例）
+- 修改文件：2 个
+  - MainActivity.kt（业务逻辑改造）
+  - build.gradle.kts（依赖配置）
+- 新增代码：约 100 行
+- 累计代码：约 230 行
+
+**测试结果**
+- ✅ 真机测试：华为手机 API 29 - 成功
+- ✅ 虚拟机测试：Pixel 2 API 30 - 成功
+- ✅ 数据持久化：重启应用数据保留 - 成功
+- ✅ 多条日程：添加 10+ 条日程无卡顿 - 成功
+
+**技术突破**
+- 🎯 掌握 Room 数据库框架
+- 🎯 理解协程和线程调度
+- 🎯 实现真正可用的数据持久化
+- 🎯 学会真机和虚拟机调试
+
+#### 💭 心得体会
+
+**进展顺利**
+- ✅ Room 比原生 SQLite 简单太多了
+- ✅ 协程让异步操作变得优雅
+- ✅ 真机调试体验比虚拟机好
+- ✅ 数据库配置一次就能用，很稳定
+
+**遇到的挑战**
+- ⚠️ 虚拟机资源占用导致电脑卡死（已解决）
+- ⚠️ 第一次理解协程和线程切换（已掌握）
+- ⚠️ Flow vs List 选择纠结（最终简化）
+
+**经验总结**
+1. **硬件资源很重要** - 虚拟机配置要根据电脑性能调整
+2. **真机调试最高效** - 响应快、资源占用少
+3. **不要过度设计** - Flow 虽强大但简单场景用 List 就够了
+4. **协程是必修课** - Android 开发必须掌握的技能
+
+**对比之前项目**
+- **类似 Final_KOB 的 MySQL**：都是持久化存储
+- **类似 Django 的 ORM**：Room = Android 版的 Django ORM
+- **类似 JavaScript 的 async/await**：协程 = Kotlin 版的异步
+
+#### 📝 明日计划
+
+**Day 4 目标**：优化列表显示（RecyclerView）
+
+**核心任务**：
+- [ ] 用 RecyclerView 替代 TextView
+- [ ] 创建 EventAdapter 适配器
+- [ ] 设计列表项布局（item_event.xml）
+- [ ] 实现列表项点击查看详情
+- [ ] 优化列表性能和样式
+- [ ] 添加滑动删除功能（ItemTouchHelper）
+
+**预计难度**：⭐⭐⭐  
+**预计用时**：2-3 小时
+
+**技术要点**：
+- RecyclerView（类似 Web 的虚拟滚动）
+- ViewHolder 模式（性能优化）
+- Adapter 适配器模式
+- ItemTouchHelper（滑动删除）
+
+---
+
+**Day 3 完成！数据库搞定，应用已经能真正使用了！** 🎉
+
+**今日评分**：⭐⭐⭐⭐⭐ (5/5) - 虽然遇到硬件问题，但最终完美解决！核心功能已实现！
 
 ---
 
