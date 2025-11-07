@@ -26,12 +26,13 @@ Day 10: AcWing 平台集成 ✅
 Day 11: 用户认证 + UI优化 + 功能规划 ✅
 Day 12: AcWing OAuth2 一键登录 ✅
 Day 13: Web 端 AcWing OAuth2 登录 ✅
+Day 14: QQ OAuth2 登录 + 代码清理 ✅
 ```
 
 **项目启动**：2025年11月4日  
 **最近更新**：2025年11月7日  
 **开发状态**：🎉 持续优化中！  
-**当前阶段**：Day 13 已完成 - Web 端 AcWing OAuth2 登录 + 用户头像显示完成！
+**当前阶段**：Day 14 已完成 - QQ OAuth2 登录 + 模型模块化重构 + 代码清理完成！
 
 ---
 
@@ -52,6 +53,7 @@ Day 13: Web 端 AcWing OAuth2 登录 ✅
 | **Day 11** | 用户认证 + UI优化 + 功能规划 | ✅ 完成 | 8h | JWT认证 + 三端优化 + 3500+行规划文档 | [📖 查看](./day11_user_authentication_and_optimization.md) |
 | **Day 12** | AcWing OAuth2 一键登录 | ✅ 完成 | 3h | OAuth2授权 + Token验证 + Vuex模块化 | [📖 查看](./day12_acwing_oauth2_login.md) |
 | **Day 13** | Web 端 AcWing OAuth2 登录 | ✅ 完成 | 6h | Web OAuth2 + 环境变量 + 静态文件 | [📖 查看](./day13_web_acwing_oauth2_login.md) |
+| **Day 14** | QQ OAuth2 登录 + 代码清理 | ✅ 完成 | 3h | QQ OAuth2 + 模型模块化 + 代码优化 | [📖 查看](./day14_qq_oauth2_login_and_code_cleanup.md) |
 
 **状态图例**：⏳ 未开始 | 🚀 进行中 | ✅ 完成 | ⏭️ 跳过
 
@@ -118,24 +120,30 @@ Day 13: Web 端 AcWing OAuth2 登录 ✅
    - AI助手规划
    - 商业模式设计
 
-**🎉 扩展功能 400% 完成（远超预期）！**
+7. ✅ **多端 OAuth2 登录**
+   - AcWing 登录（Web + AcApp）
+   - QQ 登录（Web）
+   - 用户头像显示
+   - 统一的 JWT 认证
+
+**🎉 扩展功能 550% 完成（远超预期）！**
 
 ---
 
 ## 📈 项目统计
 
-### 累计统计（截至 Day 13）
+### 累计统计（截至 Day 14）
 
-- **完成天数**：13 天（Day 7 跳过）
-- **累计用时**：43 小时
-- **总文件数**：59+ 个（Android 13 + Backend 15 + Web 18 + AcWing 13）
-- **累计代码行数**：约 8500+ 行
-- **功能完成**：13/11（118%）✅
+- **完成天数**：14 天（Day 7 跳过）
+- **累计用时**：46 小时
+- **总文件数**：60+ 个（Android 13 + Backend 18 + Web 20 + AcWing 13）
+- **累计代码行数**：约 9500+ 行（代码清理后更精简）
+- **功能完成**：14/11（127%）✅
 - **作业要求**：✅ 100% 完成（3个基本要求全部实现）
-- **扩展功能**：✅ 500% 完成（三客户端 + 双端OAuth2 + 功能规划）
-- **遇到的坑**：33+ 个（全部解决）
-- **数据库规模**：3 张表（events, public_calendars, acwing_users）
-- **技术栈**：Kotlin + Django + Vue3 (Vite) + Vue3 (VueCLI) + JWT + OAuth2 (Web+AcApp) - 全栈
+- **扩展功能**：✅ 550% 完成（三客户端 + 三种OAuth2登录 + 功能规划）
+- **遇到的坑**：36+ 个（全部解决）
+- **数据库规模**：4 张表（events, public_calendars, acwing_users, qq_users）
+- **技术栈**：Kotlin + Django + Vue3 (Vite) + Vue3 (VueCLI) + JWT + OAuth2 (AcWing+QQ) - 全栈
 - **规划文档**：5 个（3500+ 行）
 
 ### 三客户端文件清单（Day 10 更新）
@@ -184,12 +192,18 @@ Day 13: Web 端 AcWing OAuth2 登录 ✅
   - Calendar.js（ES Module 导出）
   - vue.config.js（Library 模式配置）
 
-**用户认证模块 - backend + web（Day 11-12）**：
-- backend/api/views/auth.py（register, login, me, acwing_login 接口）
+**用户认证模块 - backend + web（Day 11-14）**：
+- backend/api/models/（模块化重构）
+  - user.py（AcWingUser + QQUser）
+  - event.py（Event）
+  - calendar.py（PublicCalendar）
+- backend/api/views/auth.py（register, login, me, acwing_login, qq_login）
 - backend/api/views/oauth_callback.py（OAuth2 回调处理）
-- backend/api/models.py（AcWingUser 模型）
 - backend/settings.py（JWT + OAuth2 配置）
-- web/views/account/LoginView.vue（登录注册页面）
+- backend/.env（环境变量：AcWing + QQ 凭证）
+- web/views/account/LoginView.vue（登录注册 + AcWing + QQ）
+- web/views/account/AcWingCallback.vue（AcWing 回调）
+- web/views/account/QQCallback.vue（QQ 回调）
 - web/api/index.js（Token 自动刷新拦截器）
 - acapp/main.js（OAuth2 授权流程 + Token 验证）
 - acapp/store/（Vuex 模块化：user, events, router）
