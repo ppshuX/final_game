@@ -106,12 +106,12 @@
 
 ## 📈 项目规模
 
-### 代码统计（项目完成 Day 11）
+### 代码统计（最新更新 Day 13）
 
-- **总文件数**：50+ 个（Android 13 + Backend 10 + Web 15 + AcWing 9 + 文档 5+）
-- **核心代码**：约 6500+ 行
-- **开发用时**：34 小时
-- **完成天数**：11 天（跳过 Day 7）
+- **总文件数**：59+ 个（Android 13 + Backend 15 + Web 18 + AcWing 13）
+- **核心代码**：约 8500+ 行
+- **开发用时**：43 小时
+- **完成天数**：13 天（跳过 Day 7）
 - **规划文档**：5 个（3500+ 行）
 
 ### 全栈文件清单
@@ -189,6 +189,22 @@ KotlinCalendar/
 | **Event 模型重构** | 2 | 300+ | start_time/end_time |
 | **规划文档** | 5 | 3500+ | 详细功能规划 |
 | **Day 11 合计** | 15 | 5000+ | 一天新增（含文档）|
+
+**Day 12 新增**：
+| 模块 | 文件数 | 代码行数 | 说明 |
+|-----|-------|---------|------|
+| **OAuth2 认证** | 3 | 500+ | AcWing 授权登录 |
+| **Vuex 模块化** | 4 | 300+ | user/events/router 模块 |
+| **Day 12 合计** | 7 | 800+ | OAuth2 + 重构 |
+
+**Day 13 新增**：
+| 模块 | 文件数 | 代码行数 | 说明 |
+|-----|-------|---------|------|
+| **Web OAuth2** | 2 | 600+ | LoginView + Callback |
+| **用户头像** | 2 | 300+ | NavBar + Serializer |
+| **环境变量** | 2 | 100+ | .env + dotenv |
+| **静态文件** | 1 | 200+ | Nginx配置 |
+| **Day 13 合计** | 7 | 1200+ | Web登录 + 环境配置 |
 
 ---
 
@@ -330,8 +346,10 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
 ✅ Day 9:    Django 后端 + Vue3 Web 端（100%）
 ✅ Day 10:   AcWing 平台集成（100%）
 ✅ Day 11:   用户认证 + UI优化 + 功能规划（100%）
+✅ Day 12:   AcWing OAuth2 一键登录（AcApp端）（100%）
+✅ Day 13:   AcWing OAuth2 一键登录（Web端）（100%）
 
-总体进度：100% 🎯🎉
+总体进度：118% 🎯🎉（持续超出原计划）
 ```
 
 ### 当前可用服务
@@ -359,4 +377,6 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
 - [day09_fullstack_integration.md](./day09_fullstack_integration.md) - Day 9: Django 后端 + Vue3 Web 端
 - [day10_acwing_platform_integration.md](./day10_acwing_platform_integration.md) - Day 10: AcWing 平台集成
 - [day11_user_authentication_and_optimization.md](./day11_user_authentication_and_optimization.md) - Day 11: 用户认证 + UI优化 + 功能规划
+- [day12_acwing_oauth2_login.md](./day12_acwing_oauth2_login.md) - Day 12: AcWing OAuth2 一键登录（AcApp端）
+- [day13_web_acwing_oauth2_login.md](./day13_web_acwing_oauth2_login.md) - Day 13: AcWing OAuth2 一键登录（Web端）
 

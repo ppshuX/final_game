@@ -25,12 +25,13 @@ Day 9: Django 后端 + Vue3 Web 端 ✅
 Day 10: AcWing 平台集成 ✅
 Day 11: 用户认证 + UI优化 + 功能规划 ✅
 Day 12: AcWing OAuth2 一键登录 ✅
+Day 13: Web 端 AcWing OAuth2 登录 ✅
 ```
 
 **项目启动**：2025年11月4日  
 **最近更新**：2025年11月7日  
 **开发状态**：🎉 持续优化中！  
-**当前阶段**：Day 12 已完成 - AcWing OAuth2 一键登录 + Vuex 模块化重构完成！
+**当前阶段**：Day 13 已完成 - Web 端 AcWing OAuth2 登录 + 用户头像显示完成！
 
 ---
 
@@ -50,6 +51,7 @@ Day 12: AcWing OAuth2 一键登录 ✅
 | **Day 10** | AcWing 平台集成 | ✅ 完成 | 8h | Vue3+VueCLI + Vuex 路由 + 三端上线 | [📖 查看](./day10_acwing_platform_integration.md) |
 | **Day 11** | 用户认证 + UI优化 + 功能规划 | ✅ 完成 | 8h | JWT认证 + 三端优化 + 3500+行规划文档 | [📖 查看](./day11_user_authentication_and_optimization.md) |
 | **Day 12** | AcWing OAuth2 一键登录 | ✅ 完成 | 3h | OAuth2授权 + Token验证 + Vuex模块化 | [📖 查看](./day12_acwing_oauth2_login.md) |
+| **Day 13** | Web 端 AcWing OAuth2 登录 | ✅ 完成 | 6h | Web OAuth2 + 环境变量 + 静态文件 | [📖 查看](./day13_web_acwing_oauth2_login.md) |
 
 **状态图例**：⏳ 未开始 | 🚀 进行中 | ✅ 完成 | ⏭️ 跳过
 
@@ -122,18 +124,18 @@ Day 12: AcWing OAuth2 一键登录 ✅
 
 ## 📈 项目统计
 
-### 累计统计（截至 Day 12）
+### 累计统计（截至 Day 13）
 
-- **完成天数**：12 天（Day 7 跳过）
-- **累计用时**：37 小时
-- **总文件数**：54+ 个（Android 13 + Backend 13 + Web 15 + AcWing 13）
-- **累计代码行数**：约 7300+ 行
-- **功能完成**：12/11（109%）✅
+- **完成天数**：13 天（Day 7 跳过）
+- **累计用时**：43 小时
+- **总文件数**：59+ 个（Android 13 + Backend 15 + Web 18 + AcWing 13）
+- **累计代码行数**：约 8500+ 行
+- **功能完成**：13/11（118%）✅
 - **作业要求**：✅ 100% 完成（3个基本要求全部实现）
-- **扩展功能**：✅ 450% 完成（三客户端 + 用户认证 + OAuth2 + 功能规划）
-- **遇到的坑**：27+ 个（全部解决）
+- **扩展功能**：✅ 500% 完成（三客户端 + 双端OAuth2 + 功能规划）
+- **遇到的坑**：33+ 个（全部解决）
 - **数据库规模**：3 张表（events, public_calendars, acwing_users）
-- **技术栈**：Kotlin + Django + Vue3 (Vite) + Vue3 (VueCLI) + JWT + OAuth2 - 全栈
+- **技术栈**：Kotlin + Django + Vue3 (Vite) + Vue3 (VueCLI) + JWT + OAuth2 (Web+AcApp) - 全栈
 - **规划文档**：5 个（3500+ 行）
 
 ### 三客户端文件清单（Day 10 更新）
