@@ -53,7 +53,7 @@ Day 14: QQ OAuth2 登录 + 代码清理 ✅
 | **Day 11** | 用户认证 + UI优化 + 功能规划 | ✅ 完成 | 8h | JWT认证 + 三端优化 + 3500+行规划文档 | [📖 查看](./day11_user_authentication_and_optimization.md) |
 | **Day 12** | AcWing OAuth2 一键登录 | ✅ 完成 | 3h | OAuth2授权 + Token验证 + Vuex模块化 | [📖 查看](./day12_acwing_oauth2_login.md) |
 | **Day 13** | Web 端 AcWing OAuth2 登录 | ✅ 完成 | 6h | Web OAuth2 + 环境变量 + 静态文件 | [📖 查看](./day13_web_acwing_oauth2_login.md) |
-| **Day 14** | QQ OAuth2 登录 + 代码清理 | ✅ 完成 | 3h | QQ OAuth2 + 模型模块化 + 代码优化 | [📖 查看](./day14_qq_oauth2_login_and_code_cleanup.md) |
+| **Day 14** | QQ OAuth2 + 用户中心 + JWT修复 | ✅ 完成 | 8h | QQ登录 + 个人中心 + JWT核心问题修复 | [📖 查看](./day14_qq_oauth2_login_and_code_cleanup.md) |
 
 **状态图例**：⏳ 未开始 | 🚀 进行中 | ✅ 完成 | ⏭️ 跳过
 
@@ -126,7 +126,15 @@ Day 14: QQ OAuth2 登录 + 代码清理 ✅
    - 用户头像显示
    - 统一的 JWT 认证
 
-**🎉 扩展功能 550% 完成（远超预期）！**
+8. ✅ **用户个人中心**
+   - 用户信息展示
+   - 统计信息（总日程/今日/即将到来）
+   - 第三方账号绑定管理
+   - 个人信息编辑
+   - 修改密码功能
+   - 智能账号保护（至少保留一种登录方式）
+
+**🎉 扩展功能 600% 完成（远超预期）！**
 
 ---
 
@@ -135,13 +143,13 @@ Day 14: QQ OAuth2 登录 + 代码清理 ✅
 ### 累计统计（截至 Day 14）
 
 - **完成天数**：14 天（Day 7 跳过）
-- **累计用时**：46 小时
-- **总文件数**：60+ 个（Android 13 + Backend 18 + Web 20 + AcWing 13）
-- **累计代码行数**：约 9500+ 行（代码清理后更精简）
+- **累计用时**：49 小时
+- **总文件数**：64+ 个（Android 13 + Backend 21 + Web 22 + AcWing 13）
+- **累计代码行数**：约 10000+ 行（代码清理后更精简）
 - **功能完成**：14/11（127%）✅
 - **作业要求**：✅ 100% 完成（3个基本要求全部实现）
-- **扩展功能**：✅ 550% 完成（三客户端 + 三种OAuth2登录 + 功能规划）
-- **遇到的坑**：36+ 个（全部解决）
+- **扩展功能**：✅ 600% 完成（三客户端 + 四种登录方式 + 用户中心 + 功能规划）
+- **遇到的坑**：36+ 个（全部解决，含 JWT 核心问题）
 - **数据库规模**：4 张表（events, public_calendars, acwing_users, qq_users）
 - **技术栈**：Kotlin + Django + Vue3 (Vite) + Vue3 (VueCLI) + JWT + OAuth2 (AcWing+QQ) - 全栈
 - **规划文档**：5 个（3500+ 行）

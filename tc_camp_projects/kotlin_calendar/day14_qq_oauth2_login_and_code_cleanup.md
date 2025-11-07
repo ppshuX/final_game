@@ -1,9 +1,22 @@
-# 📅 Day 14: QQ OAuth2 一键登录 + 代码清理与重构
+# 📅 Day 14: QQ OAuth2 一键登录 + 用户个人中心 + JWT 核心问题修复
 
 > **日期**：2025年11月7日  
-> **用时**：约3小时  
-> **难度**：⭐⭐⭐⭐  
+> **用时**：约8小时  
+> **难度**：⭐⭐⭐⭐⭐  
 > **状态**：✅ 完成
+
+---
+
+## 🎯 重要突破
+
+### 核心问题修复 ⭐⭐⭐⭐⭐
+
+**修复了影响全局的 JWT 认证问题！**
+
+**问题**：所有需要认证的 API 返回 403 Forbidden  
+**原因**：`DEFAULT_AUTHENTICATION_CLASSES` 被注释  
+**影响**：用户信息获取、导航栏头像、个人中心全部失效  
+**修复后**：所有认证功能恢复正常 ✅
 
 ---
 
@@ -11,19 +24,23 @@
 
 ### 核心任务
 1. ✅ 实现 Web 端 QQ OAuth2 一键登录
-2. ✅ 模型模块化重构（提升可维护性）
-3. ✅ 代码清理优化（删除调试日志）
-4. ✅ 项目结构优化
-5. ✅ 处理数据库迁移问题
+2. ✅ 开发用户个人中心页面
+3. ✅ 修复 JWT 认证核心问题（关键！）
+4. ✅ 模型模块化重构（提升可维护性）
+5. ✅ 代码清理优化（删除调试日志）
+6. ✅ 项目结构优化
+7. ✅ 处理数据库迁移问题
 
 ### 完成情况
 
 **进度**：100% ✅  
-**Git 提交**：8 次  
-**新增文件**：7 个  
+**Git 提交**：25+ 次  
+**新增文件**：11 个  
 **删除文件**：4 个  
-**修改文件**：15+ 个  
-**代码清理**：35+ 处调试输出
+**修改文件**：20+ 个  
+**代码清理**：35+ 处调试输出  
+**解决问题**：8 个关键问题  
+**新增 API**：8 个端点
 
 ---
 
@@ -707,7 +724,764 @@ def get_photo(self, obj):
 
 ---
 
-## 🐛 问题解决记录
+## 👤 用户个人中心实现
+
+### 1. 功能设计
+
+#### 核心功能模块
+
+```
+用户个人中心
+├── 用户信息展示
+│   ├── 头像（120x120 圆形）
+│   ├── 用户名
+│   ├── 邮箱
+│   └── 加入时间
+├── 用户统计信息
+│   ├── 📅 总日程数
+│   ├── 📆 今日日程数
+│   └── ⏰ 即将到来的日程数
+├── 第三方账号绑定
+│   ├── AcWing 绑定状态
+│   ├── QQ 绑定状态
+│   └── 解绑功能（智能保护）
+├── 个人信息编辑
+│   ├── 修改用户名
+│   └── 修改邮箱
+└── 修改密码
+    └── 仅普通账号可用
+```
+
+### 2. 后端 API 实现
+
+#### 用户统计 API
+
+```python
+# backend/api/views/user.py
+
+from rest_framework.decorators import api_view, authentication_classes
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.response import Response
+from django.utils import timezone
+from datetime import timedelta
+
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+def user_stats(request):
+    """获取用户统计信息"""
+    user = request.user
+    
+    # 总日程数
+    total_events = user.events.count()
+    
+    # 今日日程数
+    today = timezone.now().date()
+    today_events = user.events.filter(
+        start_time__date=today
+    ).count()
+    
+    # 即将到来的日程数（未来7天）
+    next_week = today + timedelta(days=7)
+    upcoming_events = user.events.filter(
+        start_time__date__range=(today, next_week)
+    ).count()
+    
+    return Response({
+        'total_events': total_events,
+        'today_events': today_events,
+        'upcoming_events': upcoming_events
+    })
+```
+
+#### 绑定状态 API
+
+```python
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+def user_bindings(request):
+    """获取用户第三方账号绑定状态"""
+    user = request.user
+    
+    return Response({
+        'has_acwing': hasattr(user, 'acwing'),
+        'has_qq': hasattr(user, 'qq_profile'),
+        'has_password': user.has_usable_password(),
+        'acwing_username': user.acwing.username if hasattr(user, 'acwing') else None,
+        'qq_nickname': user.qq_profile.nickname if hasattr(user, 'qq_profile') else None
+    })
+```
+
+#### 更新个人信息 API
+
+```python
+@api_view(['PATCH'])
+@authentication_classes([JWTAuthentication])
+def update_profile(request):
+    """更新用户个人信息"""
+    user = request.user
+    
+    username = request.data.get('username')
+    email = request.data.get('email')
+    
+    # 更新用户名（检查重复）
+    if username and username != user.username:
+        if User.objects.filter(username=username).exclude(id=user.id).exists():
+            return Response(
+                {'error': '用户名已被使用'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        user.username = username
+    
+    # 更新邮箱
+    if email is not None:
+        user.email = email
+    
+    user.save()
+    
+    return Response({
+        'id': user.id,
+        'username': user.username,
+        'email': user.email
+    })
+```
+
+#### 修改密码 API
+
+```python
+@api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+def change_password(request):
+    """修改密码"""
+    user = request.user
+    
+    # 检查是否是 OAuth 用户
+    if not user.has_usable_password():
+        return Response(
+            {'error': 'OAuth 账号无密码，无需修改'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    old_password = request.data.get('old_password')
+    new_password = request.data.get('new_password')
+    
+    # 验证旧密码
+    if not user.check_password(old_password):
+        return Response(
+            {'error': '旧密码错误'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    # 设置新密码
+    user.set_password(new_password)
+    user.save()
+    
+    return Response({'message': '密码修改成功，请重新登录'})
+```
+
+#### 解绑账号 API
+
+```python
+@api_view(['DELETE'])
+@authentication_classes([JWTAuthentication])
+def unbind_acwing(request):
+    """解绑 AcWing 账号"""
+    user = request.user
+    
+    # 检查是否至少有一种登录方式
+    has_password = user.has_usable_password()
+    has_qq = hasattr(user, 'qq_profile')
+    
+    if not has_password and not has_qq:
+        return Response(
+            {'error': '至少保留一种登录方式'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    # 删除 AcWing 绑定
+    if hasattr(user, 'acwing'):
+        user.acwing.delete()
+    
+    return Response({'message': 'AcWing 账号已解绑'})
+```
+
+### 3. 前端个人中心页面
+
+```vue
+<!-- web/calendar_web/src/views/account/ProfileView.vue -->
+
+<template>
+  <div class="profile-container">
+    <NavBar />
+    
+    <div class="profile-content">
+      <!-- 用户信息卡片 -->
+      <el-card class="user-card">
+        <div class="user-header">
+          <el-avatar :src="user?.photo" :size="120">
+            {{ user?.username[0].toUpperCase() }}
+          </el-avatar>
+          <div class="user-info">
+            <h2>{{ user?.username }}</h2>
+            <p>{{ user?.email || '未设置邮箱' }}</p>
+            <p class="join-date">加入时间：{{ formatDate(user?.created_at) }}</p>
+          </div>
+        </div>
+      </el-card>
+      
+      <!-- 统计信息卡片 -->
+      <el-card class="stats-card">
+        <template #header>
+          <h3>我的统计</h3>
+        </template>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-icon">📅</div>
+            <div class="stat-value">{{ stats.total_events }}</div>
+            <div class="stat-label">总日程数</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon">📆</div>
+            <div class="stat-value">{{ stats.today_events }}</div>
+            <div class="stat-label">今日日程</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon">⏰</div>
+            <div class="stat-value">{{ stats.upcoming_events }}</div>
+            <div class="stat-label">即将到来</div>
+          </div>
+        </div>
+      </el-card>
+      
+      <!-- 第三方账号绑定 -->
+      <el-card class="bindings-card">
+        <template #header>
+          <h3>第三方账号</h3>
+        </template>
+        <div class="binding-list">
+          <!-- AcWing -->
+          <div class="binding-item">
+            <div class="binding-info">
+              <img
+                src="https://app7626.acapp.acwing.com.cn/static/images/AcWing_logo.png"
+                class="binding-icon"
+              />
+              <div>
+                <div class="binding-name">AcWing</div>
+                <div class="binding-status" v-if="bindings.has_acwing">
+                  ✅ 已绑定：{{ bindings.acwing_username }}
+                </div>
+                <div class="binding-status" v-else>
+                  ⚪ 未绑定
+                </div>
+              </div>
+            </div>
+            <el-button
+              v-if="bindings.has_acwing"
+              size="small"
+              :disabled="!canUnbind"
+              @click="unbindAcWing"
+            >
+              解绑
+            </el-button>
+          </div>
+          
+          <!-- QQ -->
+          <div class="binding-item">
+            <div class="binding-info">
+              <img
+                src="https://app7626.acapp.acwing.com.cn/static/images/qq_login.png"
+                class="binding-icon"
+              />
+              <div>
+                <div class="binding-name">QQ</div>
+                <div class="binding-status" v-if="bindings.has_qq">
+                  ✅ 已绑定：{{ bindings.qq_nickname }}
+                </div>
+                <div class="binding-status" v-else>
+                  ⚪ 未绑定
+                </div>
+              </div>
+            </div>
+            <el-button
+              v-if="bindings.has_qq"
+              size="small"
+              :disabled="!canUnbind"
+              @click="unbindQQ"
+            >
+              解绑
+            </el-button>
+          </div>
+        </div>
+        <el-alert
+          v-if="!canUnbind"
+          type="warning"
+          :closable="false"
+          show-icon
+          style="margin-top: 16px"
+        >
+          至少保留一种登录方式
+        </el-alert>
+      </el-card>
+      
+      <!-- 编辑个人信息 -->
+      <el-card class="edit-card">
+        <template #header>
+          <h3>编辑资料</h3>
+        </template>
+        <el-form label-width="100px">
+          <el-form-item label="用户名">
+            <el-input v-model="editForm.username" />
+          </el-form-item>
+          <el-form-item label="邮箱">
+            <el-input v-model="editForm.email" />
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="saveProfile">
+              保存修改
+            </el-button>
+          </el-form-item>
+        </el-form>
+      </el-card>
+      
+      <!-- 修改密码（仅普通账号） -->
+      <el-card class="password-card" v-if="bindings.has_password">
+        <template #header>
+          <h3>修改密码</h3>
+        </template>
+        <el-form label-width="100px">
+          <el-form-item label="旧密码">
+            <el-input v-model="passwordForm.old_password" type="password" />
+          </el-form-item>
+          <el-form-item label="新密码">
+            <el-input v-model="passwordForm.new_password" type="password" />
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="changePassword">
+              修改密码
+            </el-button>
+          </el-form-item>
+        </el-form>
+      </el-card>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, reactive, onMounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import api from '@/api'
+import NavBar from '@/components/NavBar.vue'
+
+const router = useRouter()
+
+const user = ref(null)
+const stats = reactive({
+  total_events: 0,
+  today_events: 0,
+  upcoming_events: 0
+})
+const bindings = reactive({
+  has_acwing: false,
+  has_qq: false,
+  has_password: false,
+  acwing_username: '',
+  qq_nickname: ''
+})
+
+const editForm = reactive({
+  username: '',
+  email: ''
+})
+
+const passwordForm = reactive({
+  old_password: '',
+  new_password: ''
+})
+
+// 是否可以解绑（至少保留一种登录方式）
+const canUnbind = computed(() => {
+  const count = [
+    bindings.has_acwing,
+    bindings.has_qq,
+    bindings.has_password
+  ].filter(Boolean).length
+  
+  return count > 1
+})
+
+// 加载用户信息
+const loadUserInfo = async () => {
+  try {
+    const { data } = await api.getCurrentUser()
+    user.value = data
+    editForm.username = data.username
+    editForm.email = data.email
+  } catch (error) {
+    ElMessage.error('加载用户信息失败')
+  }
+}
+
+// 加载统计信息
+const loadStats = async () => {
+  try {
+    const { data } = await api.getUserStats()
+    Object.assign(stats, data)
+  } catch (error) {
+    ElMessage.error('加载统计信息失败')
+  }
+}
+
+// 加载绑定状态
+const loadBindings = async () => {
+  try {
+    const { data } = await api.getUserBindings()
+    Object.assign(bindings, data)
+  } catch (error) {
+    ElMessage.error('加载绑定状态失败')
+  }
+}
+
+// 保存个人信息
+const saveProfile = async () => {
+  try {
+    await api.updateProfile(editForm)
+    ElMessage.success('保存成功')
+    loadUserInfo()
+  } catch (error) {
+    ElMessage.error(error.response?.data?.error || '保存失败')
+  }
+}
+
+// 修改密码
+const changePassword = async () => {
+  if (!passwordForm.old_password || !passwordForm.new_password) {
+    ElMessage.warning('请填写完整')
+    return
+  }
+  
+  if (passwordForm.new_password.length < 6) {
+    ElMessage.warning('新密码至少 6 个字符')
+    return
+  }
+  
+  try {
+    await api.changePassword(passwordForm)
+    ElMessage.success('密码修改成功，请重新登录')
+    
+    // 清除 token，跳转登录
+    setTimeout(() => {
+      localStorage.clear()
+      router.push('/login')
+    }, 1500)
+  } catch (error) {
+    ElMessage.error(error.response?.data?.error || '修改失败')
+  }
+}
+
+// 解绑 AcWing
+const unbindAcWing = async () => {
+  await ElMessageBox.confirm('确定要解绑 AcWing 账号吗？', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  })
+  
+  try {
+    await api.unbindAcWing()
+    ElMessage.success('解绑成功')
+    loadBindings()
+  } catch (error) {
+    ElMessage.error(error.response?.data?.error || '解绑失败')
+  }
+}
+
+// 解绑 QQ
+const unbindQQ = async () => {
+  await ElMessageBox.confirm('确定要解绑 QQ 账号吗？', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  })
+  
+  try {
+    await api.unbindQQ()
+    ElMessage.success('解绑成功')
+    loadBindings()
+  } catch (error) {
+    ElMessage.error(error.response?.data?.error || '解绑失败')
+  }
+}
+
+onMounted(() => {
+  loadUserInfo()
+  loadStats()
+  loadBindings()
+})
+</script>
+
+<style scoped>
+.profile-container {
+  min-height: 100vh;
+  background: #f5f5f5;
+}
+
+.profile-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.user-card {
+  margin-bottom: 20px;
+}
+
+.user-header {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.user-info h2 {
+  margin: 0 0 10px 0;
+}
+
+.user-info p {
+  margin: 5px 0;
+  color: #666;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.stat-item {
+  text-align: center;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  transition: transform 0.2s;
+}
+
+.stat-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.stat-icon {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: bold;
+  color: #409eff;
+  margin-bottom: 5px;
+}
+
+.stat-label {
+  color: #666;
+  font-size: 14px;
+}
+
+.binding-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.binding-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.binding-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.binding-icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.binding-name {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.binding-status {
+  font-size: 14px;
+  color: #666;
+}
+</style>
+```
+
+### 4. 导航栏添加入口
+
+```vue
+<!-- web/calendar_web/src/components/NavBar.vue -->
+
+<el-dropdown-menu>
+  <el-dropdown-item disabled>
+    <!-- 用户信息 -->
+  </el-dropdown-item>
+  <el-dropdown-item command="profile">
+    <el-icon><User /></el-icon>
+    个人中心
+  </el-dropdown-item>
+  <el-dropdown-item divided command="logout">
+    <el-icon><SwitchButton /></el-icon>
+    退出登录
+  </el-dropdown-item>
+</el-dropdown-menu>
+
+<script setup>
+const handleCommand = (command) => {
+  if (command === 'profile') {
+    router.push('/profile')
+  } else if (command === 'logout') {
+    handleLogout()
+  }
+}
+</script>
+```
+
+---
+
+## 🔥 JWT 认证核心问题修复
+
+### 问题描述（重大 Bug！）
+
+**现象**：
+```
+GET /api/auth/me/ 403 (Forbidden)
+{
+  "detail": "身份认证信息未提供。"
+}
+```
+
+**影响范围**：
+- ❌ 导航栏无法显示用户信息
+- ❌ 个人中心无法访问
+- ❌ 所有需要认证的 API 全部失效
+
+### 问题追踪过程（耗时3小时）
+
+#### 第1步：检查 Token
+
+```javascript
+// 前端检查
+const token = localStorage.getItem('access_token')
+console.log('Token:', token)  // ✅ Token 存在
+```
+
+#### 第2步：检查请求头
+
+```javascript
+// Chrome DevTools Network
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
+// ✅ Authorization header 正确发送
+```
+
+#### 第3步：检查 Nginx 配置
+
+```nginx
+location /api/ {
+    include uwsgi_params;
+    uwsgi_pass 127.0.0.1:8000;
+    
+    # 确保传递 Authorization header
+    uwsgi_param HTTP_AUTHORIZATION $http_authorization;
+}
+```
+
+**结果**：✅ Nginx 配置正确
+
+#### 第4步：检查 uWSGI 配置
+
+```ini
+[uwsgi]
+socket = 127.0.0.1:8000
+module = calendar_backend.wsgi:application
+buffer-size = 65536
+```
+
+**结果**：✅ uWSGI 配置正确
+
+#### 第5步：检查 CORS 配置
+
+```python
+CORS_ALLOWED_ORIGINS = [
+    'https://www.acwing.com',
+    'https://app7626.acapp.acwing.com.cn',
+]
+
+CORS_ALLOW_HEADERS = [
+    'authorization',  # ✅ 允许 Authorization header
+    'content-type',
+]
+```
+
+**结果**：✅ CORS 配置正确
+
+#### 第6步：检查 DRF 配置（发现问题！）
+
+```python
+# backend/calendar_backend/settings.py
+
+REST_FRAMEWORK = {
+    # ❌ 认证类被注释掉了！
+    # 'DEFAULT_AUTHENTICATION_CLASSES': [
+    #     'rest_framework_simplejwt.authentication.JWTAuthentication',
+    # ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ],
+}
+```
+
+**问题根源**：认证类被注释，DRF 无法识别 JWT Token！
+
+### 解决方案
+
+```python
+# 启用 JWT 认证
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',  # ✅ 启用
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ],
+}
+```
+
+**修复后**：
+```
+GET /api/auth/me/ 200 OK
+{
+  "id": 1,
+  "username": "张三",
+  "email": "test@example.com",
+  "photo": "https://..."
+}
+```
+
+**所有功能恢复正常！** ✅
+
+---
+
+## 🐛 其他问题解决记录
 
 ### 问题 1: 数据库迁移依赖错误
 
@@ -785,22 +1559,25 @@ git stash pop
 
 | 指标 | 数量 |
 |-----|------|
-| **新增文件** | 7 个 |
+| **新增文件** | 11 个 |
 | **删除文件** | 4 个 |
-| **修改文件** | 15+ 个 |
-| **Git 提交** | 8 次 |
+| **修改文件** | 20+ 个 |
+| **Git 提交** | 25+ 次 |
 | **代码清理** | 35+ 处 |
 | **模型重构** | 1 → 4 文件 |
+| **新增 API** | 8 个端点 |
 
 ### 时间分布
 
 | 任务 | 用时 |
 |-----|------|
 | QQ OAuth2 实现 | 1.5h |
+| 用户个人中心 | 2h |
+| JWT 问题修复 | 3h |
 | 模型重构 | 0.5h |
 | 代码清理 | 0.5h |
 | 问题修复 | 0.5h |
-| **总计** | **3h** |
+| **总计** | **8h** |
 
 ---
 
@@ -981,59 +1758,185 @@ web_frontend/src/
 
 ---
 
-## 🚀 下一步规划
+## 🚀 Day 15 详细规划
 
-### 已完成功能
+### 核心任务 1: 项目品牌化 ⭐⭐⭐⭐⭐
 
-**登录体系**：
-- ✅ 传统注册登录
-- ✅ AcWing 一键登录（双端）
-- ✅ QQ 一键登录（Web）
+**预计耗时**: 1-2 小时  
+**难度**: 简单
 
-**核心功能**：
-- ✅ 日历视图
-- ✅ 日程 CRUD
-- ✅ 提醒功能
-- ✅ 三客户端架构
-- ✅ 用户认证
+**实现内容**:
+1. **项目重命名**
+   - KotlinCalendar → Ralendar
+   - 更新所有页面标题
+   - 更新 README 和文档
+   - 更新 package.json
 
-### 可选功能（Day 15+）
+2. **Logo 设计更新**
+   - 使用 Roamio 风格的图标
+   - 统一配色方案
+   - 更新 favicon
 
-**高优先级**：
-1. ⭐⭐⭐⭐⭐ 用户个人中心
-2. ⭐⭐⭐⭐ 账号绑定管理
-3. ⭐⭐⭐⭐⭐ 地图功能集成
+3. **品牌文案**
+   - "Ralendar - Roamio 旗下的智能日历"
+   - 统一 slogan
+   - 关于页面
 
-**中优先级**：
-4. ⭐⭐⭐⭐ AI 语音助手
-5. ⭐⭐⭐ Android 端云同步
-6. ⭐⭐⭐⭐ 日历分享订阅
+### 核心任务 2: API 文档编写 ⭐⭐⭐⭐
+
+**预计耗时**: 2-3 小时  
+**难度**: 中等
+
+**实现内容**:
+1. **API 接口清单**
+   - 列出所有 REST API
+   - 请求/响应格式
+   - 认证要求
+
+2. **使用 Swagger/OpenAPI**
+   ```bash
+   pip install drf-yasg
+   ```
+   - 自动生成 API 文档
+   - 在线测试接口
+   - 导出 API 定义
+
+3. **数据库设计文档**
+   - ER 图
+   - 表结构说明
+   - 字段定义
+
+### 功能任务 1: 地图功能集成 ⭐⭐⭐⭐⭐
+
+**预计耗时**: 4-5 小时  
+**难度**: 中高
+
+**实现内容**:
+1. **申请高德地图 API Key**
+2. **后端地理编码**
+   - Event 模型添加 latitude/longitude 字段
+   - 地址 → 坐标转换接口
+3. **前端地图展示**
+   - 安装 `@amap/amap-jsapi-loader`
+   - 事件详情显示地图
+   - 可点击选择位置
+4. **地图视图**
+   - 创建独立的地图页面
+   - 显示所有有位置的事件
+   - 点击标记查看详情
+
+### 功能任务 2: 前端通知提醒 ⭐⭐⭐
+
+**预计耗时**: 2-3 小时  
+**难度**: 中等
+
+**实现内容**:
+1. **Web Push Notifications**
+   - 请求通知权限
+   - 定时检查即将到来的事件
+   - 发送桌面通知
+2. **提示音**
+   - 添加提示音文件
+   - 用户设置是否播放
+
+### 融合准备: Roamio 对接方案设计 ⭐⭐⭐⭐
+
+**预计耗时**: 1-2 小时  
+**难度**: 中等
+
+**实现内容**:
+1. **设计数据同步方案**
+   - 用户表如何共享
+   - 事件数据如何互通
+   - API 鉴权统一
+
+2. **组件封装规划**
+   - Ralendar 作为独立组件
+   - props 接口设计
+   - 事件回调设计
+
+3. **集成方式选择**
+   - 方案 A：iframe 嵌入（简单）
+   - 方案 B：npm 包组件（专业）
+   - 方案 C：微前端架构（复杂）
+
+---
+
+## 🌟 Roamio × Ralendar 融合展望
+
+### 短期目标（Day 15-20）
+
+1. ✅ 完成 Ralendar 核心功能
+2. ✅ 编写完整 API 文档
+3. ✅ 品牌化和视觉统一
+4. ⏳ QQ 登录审核通过
+
+### 中期目标（融合准备）
+
+1. 设计数据同步架构
+2. 创建 Ralendar 组件库
+3. 统一认证服务
+4. API Gateway 设计
+
+### 长期目标（生态建设）
+
+1. Roamio（旅行规划）+ Ralendar（时间管理）
+2. 未来扩展：Rote（笔记）、Rapture（照片）
+3. 建立完整的 Roamio 产品矩阵
 
 ---
 
 ## 🎊 总结
 
-### 今日成就
+### 今日成就（Day 14 = 突破性的一天！）
 
-**完成了 QQ 一键登录 + 大规模代码优化！** 🎉
+**这是最重要的一天！修复了影响全局的 JWT 认证问题！** 🔥
+
+**三大核心成就**：
+
+1. **✅ QQ OAuth2 一键登录**
+   - 处理 QQ 特殊格式（URL 参数 + JSONP）
+   - 三步流程完整实现
+   - 用户头像和昵称显示
+
+2. **✅ 用户个人中心**
+   - 用户信息展示
+   - 统计信息（总日程/今日/即将到来）
+   - 第三方账号绑定管理
+   - 个人信息编辑
+   - 修改密码功能
+   - 智能保护（至少保留一种登录方式）
+
+3. **✅ JWT 认证核心问题修复（最重要！）**
+   - 修复了影响全局的 403 问题
+   - 恢复了所有认证功能
+   - 系统性的问题追踪（3小时）
 
 **技术成果**：
 - ✅ QQ OAuth2 完整实现
+- ✅ 8 个新 API 端点
 - ✅ 模型模块化重构
 - ✅ 代码清理（35+ 处）
 - ✅ 项目结构优化
 
-**解决的难点**：
+**解决的难点（8个）**：
+- ✅ JWT 认证未启用（核心问题）
 - ✅ QQ API 特殊格式处理
 - ✅ 数据库迁移依赖问题
 - ✅ Git 数据库文件冲突
+- ✅ 用户名冲突处理
+- ✅ 解绑账号智能保护
+- ✅ OAuth 回调页面刷新
+- ✅ 导航栏状态更新
 
 **学习收获**：
 - ✅ QQ OAuth2 三步流程
 - ✅ URL 参数和 JSONP 解析
 - ✅ Django 模型模块化
+- ✅ 系统性问题追踪思维
 - ✅ 代码清理最佳实践
 - ✅ 数据库迁移管理
+- ✅ 用户中心功能设计
 
 ### 项目质量提升
 
@@ -1041,6 +1944,7 @@ web_frontend/src/
 - 模块化结构清晰
 - 无调试日志
 - 注释恰当
+- 错误处理完善
 
 **可维护性**：⭐⭐⭐⭐⭐
 - 每个文件职责单一
@@ -1048,9 +1952,15 @@ web_frontend/src/
 - 符合最佳实践
 
 **用户体验**：⭐⭐⭐⭐⭐
-- 三种登录方式
+- 四种登录方式（传统 + AcWing双端 + QQ）
+- 完整的用户中心
+- 智能的账号保护
 - 快速便捷
-- 显示真实头像
+
+**系统稳定性**：⭐⭐⭐⭐⭐
+- JWT 认证正常工作
+- 所有功能恢复
+- 无已知 Bug
 
 ### 项目进度
 
@@ -1061,19 +1971,36 @@ web_frontend/src/
 ✅ Day 11:   用户认证 + UI优化 + 功能规划
 ✅ Day 12:   AcWing OAuth2（AcApp端）
 ✅ Day 13:   AcWing OAuth2（Web端）
-✅ Day 14:   QQ OAuth2 + 代码清理
+✅ Day 14:   QQ OAuth2 + 用户中心 + JWT修复 ⭐
 
 总体进度：127% 🎯
 （持续超出原计划）
 ```
 
+### 项目成熟度评估
+
+| 模块 | 完成度 | 评级 |
+|-----|-------|------|
+| 基础架构 | 100% | ⭐⭐⭐⭐⭐ |
+| 用户认证 | 95% | ⭐⭐⭐⭐⭐ |
+| 用户中心 | 90% | ⭐⭐⭐⭐⭐ |
+| 日历功能 | 85% | ⭐⭐⭐⭐ |
+| 多端适配 | 70% | ⭐⭐⭐⭐ |
+| 地图功能 | 0% | 待开发 |
+| AI 助手 | 0% | 待开发 |
+
+**整体完成度：约 70%（核心功能完善）**
+
 ---
 
-**工作时长**: ~3 小时  
-**代码行数**: 1000+ 行（新增）  
+**工作时长**: ~8 小时  
+**代码行数**: 1500+ 行（新增）  
 **代码清理**: 35+ 处  
-**Git 提交**: 8 次  
-**解决问题**: 3 个  
+**Git 提交**: 25+ 次  
+**解决问题**: 8 个  
+**新增 API**: 8 个  
 
-**Day 14 完美收官！QQ 登录 + 代码优化让项目更完善更专业！** 💪🚀
+**Day 14 是突破性的一天！修复了 JWT 核心问题，完成了用户中心，实现了 QQ 登录！** 💪🚀🔥
+
+**为 Roamio 融合做好了准备！明天开始品牌化和生态建设！** 🌟
 
