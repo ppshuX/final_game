@@ -24,12 +24,13 @@ Day 8: 提醒功能 ✅
 Day 9: Django 后端 + Vue3 Web 端 ✅
 Day 10: AcWing 平台集成 ✅
 Day 11: 用户认证 + UI优化 + 功能规划 ✅
+Day 12: AcWing OAuth2 一键登录 ✅
 ```
 
 **项目启动**：2025年11月4日  
-**项目完成**：2025年11月6日  
-**开发状态**：🎉 项目完美收官！  
-**当前阶段**：Day 11 已完成 - JWT认证系统 + 三端优化 + 商业化规划全部完成！
+**最近更新**：2025年11月7日  
+**开发状态**：🎉 持续优化中！  
+**当前阶段**：Day 12 已完成 - AcWing OAuth2 一键登录 + Vuex 模块化重构完成！
 
 ---
 
@@ -48,6 +49,7 @@ Day 11: 用户认证 + UI优化 + 功能规划 ✅
 | **Day 9** | Django 后端 + Vue3 Web 端 | ✅ 完成 | 8h | 全栈架构 + 扩展功能完成 | [📖 查看](./day09_fullstack_integration.md) |
 | **Day 10** | AcWing 平台集成 | ✅ 完成 | 8h | Vue3+VueCLI + Vuex 路由 + 三端上线 | [📖 查看](./day10_acwing_platform_integration.md) |
 | **Day 11** | 用户认证 + UI优化 + 功能规划 | ✅ 完成 | 8h | JWT认证 + 三端优化 + 3500+行规划文档 | [📖 查看](./day11_user_authentication_and_optimization.md) |
+| **Day 12** | AcWing OAuth2 一键登录 | ✅ 完成 | 3h | OAuth2授权 + Token验证 + Vuex模块化 | [📖 查看](./day12_acwing_oauth2_login.md) |
 
 **状态图例**：⏳ 未开始 | 🚀 进行中 | ✅ 完成 | ⏭️ 跳过
 
@@ -120,18 +122,18 @@ Day 11: 用户认证 + UI优化 + 功能规划 ✅
 
 ## 📈 项目统计
 
-### 累计统计（截至 Day 11 - 项目完成）
+### 累计统计（截至 Day 12）
 
-- **完成天数**：11 天（Day 7 跳过）
-- **累计用时**：34 小时
-- **总文件数**：50+ 个（Android 13 + Backend 10 + Web 15 + AcWing 9 + 文档 5+）
-- **累计代码行数**：约 6500+ 行
-- **功能完成**：11/11（100%）✅
+- **完成天数**：12 天（Day 7 跳过）
+- **累计用时**：37 小时
+- **总文件数**：54+ 个（Android 13 + Backend 13 + Web 15 + AcWing 13）
+- **累计代码行数**：约 7300+ 行
+- **功能完成**：12/11（109%）✅
 - **作业要求**：✅ 100% 完成（3个基本要求全部实现）
-- **扩展功能**：✅ 400% 完成（三客户端架构 + 用户认证 + 功能规划）
-- **遇到的坑**：22+ 个（全部解决）
-- **数据库规模**：2 张表（events with user, public_calendars）
-- **技术栈**：Kotlin + Django + Vue3 (Vite) + Vue3 (VueCLI) + JWT - 全栈
+- **扩展功能**：✅ 450% 完成（三客户端 + 用户认证 + OAuth2 + 功能规划）
+- **遇到的坑**：27+ 个（全部解决）
+- **数据库规模**：3 张表（events, public_calendars, acwing_users）
+- **技术栈**：Kotlin + Django + Vue3 (Vite) + Vue3 (VueCLI) + JWT + OAuth2 - 全栈
 - **规划文档**：5 个（3500+ 行）
 
 ### 三客户端文件清单（Day 10 更新）
@@ -180,11 +182,15 @@ Day 11: 用户认证 + UI优化 + 功能规划 ✅
   - Calendar.js（ES Module 导出）
   - vue.config.js（Library 模式配置）
 
-**用户认证模块 - backend + web（Day 11 新增）**：
-- backend/api/views.py（register, login, me 接口）
-- backend/settings.py（JWT 配置）
+**用户认证模块 - backend + web（Day 11-12）**：
+- backend/api/views/auth.py（register, login, me, acwing_login 接口）
+- backend/api/views/oauth_callback.py（OAuth2 回调处理）
+- backend/api/models.py（AcWingUser 模型）
+- backend/settings.py（JWT + OAuth2 配置）
 - web/views/account/LoginView.vue（登录注册页面）
 - web/api/index.js（Token 自动刷新拦截器）
+- acapp/main.js（OAuth2 授权流程 + Token 验证）
+- acapp/store/（Vuex 模块化：user, events, router）
 
 **规划文档 - docs/（Day 11 新增）**：
 - CALENDAR_SHARING_PLAN.md（1214行 - 日历共享）
