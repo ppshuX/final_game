@@ -97,7 +97,7 @@ calendarOptions.value = {
 
 **3. 生成 App Password**
 ```
-原始密码：ycmm omun syrb veqt（16位，无空格）
+原始密码：<已撤销的密码>（16位，无空格）
 ```
 
 **4. 更新配置**
@@ -106,7 +106,7 @@ EMAIL_HOST=smtp.gmail.com
 EMAIL_PORT=587
 EMAIL_USE_TLS=True
 EMAIL_HOST_USER=wenxiaolv8@gmail.com
-EMAIL_HOST_PASSWORD=ycmmomunsyrbveqt
+EMAIL_HOST_PASSWORD=<已撤销的密码>
 DEFAULT_FROM_EMAIL=Ralendar <wenxiaolv8@gmail.com>
 ```
 
@@ -121,7 +121,7 @@ DEFAULT_FROM_EMAIL=Ralendar <wenxiaolv8@gmail.com>
 ```
 Alert: Google API Key exposed
 Severity: High
-Secret: ycmmomunsyrbveqt
+Secret: <已撤销的密码>
 Commit: 76cb4c4
 ```
 
@@ -201,7 +201,7 @@ git push
 ```
 Alert: SMTP Password exposed
 Severity: High
-Secret: zwcqgzukwkfyeaja
+Secret: <已撤销的密码>
 Commit: 418cb68
 ```
 
@@ -278,7 +278,7 @@ send_mail(
 
 **3. 获取授权码**
 ```
-授权码：MWhM934vyBrYQGVU
+授权码：<已撤销的密码>
 说明：这不是登录密码，是 SMTP 专用授权码
 ```
 
@@ -292,7 +292,7 @@ send_mail(
 | 端口 | **465** | SSL 加密端口 |
 | 加密方式 | **SSL/TLS** | 不是 STARTTLS |
 | 用户名 | roamio_ralendar@163.com | 完整邮箱地址 |
-| 密码 | MWhM934vyBrYQGVU | 授权码（非登录密码）|
+| 密码 | <已撤销的密码> | 授权码（非登录密码）|
 
 **与 Gmail/QQ 的区别**：
 
@@ -391,7 +391,7 @@ EMAIL_PORT=465
 EMAIL_USE_SSL=True
 EMAIL_USE_TLS=False
 EMAIL_HOST_USER=roamio_ralendar@163.com
-EMAIL_HOST_PASSWORD=MWhM934vyBrYQGVU
+EMAIL_HOST_PASSWORD=<已撤销的密码>
 DEFAULT_FROM_EMAIL=Ralendar <roamio_ralendar@163.com>
 ```
 
@@ -738,7 +738,7 @@ ENV_PRODUCTION_READY_TO_COPY.txt
 EMAIL_HOST_PASSWORD=your_password_here
 
 # 本地配置（不在 Git 中）
-EMAIL_HOST_PASSWORD=MWhM934vyBrYQGVU
+EMAIL_HOST_PASSWORD=<已撤销的密码>
 ```
 
 ---
