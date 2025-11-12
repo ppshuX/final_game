@@ -97,7 +97,7 @@
 
 **配置：**
 ```bash
-AMAP_API_KEY=9ff653650637657ae3514efdc81b6ad6  # Web服务（后端）
+AMAP_API_KEY=your_amap_api_key_here  # Web服务（后端）
 ```
 
 ---
@@ -147,7 +147,7 @@ class WeatherManager {
 **高德地图配置：**
 ```html
 <!-- Web端JS API -->
-<script src="https://webapi.amap.com/maps?v=2.0&key=53b6a185427e97b53e16c8786a272f62..."></script>
+<script src="https://webapi.amap.com/maps?v=2.0&key=YOUR_AMAP_JS_API_KEY"></script>
 ```
 
 ---
@@ -339,7 +339,7 @@ cd ~/kotlin_calendar/backend
 git pull
 
 # 编辑.env添加：
-AMAP_API_KEY=9ff653650637657ae3514efdc81b6ad6
+AMAP_API_KEY=your_amap_api_key_here
 
 # 重启uWSGI
 sudo pkill -9 uwsgi
